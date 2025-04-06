@@ -1,9 +1,11 @@
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django import forms
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
+from .tmdb_utils import get_movies
 
 # Create your views here.
 
@@ -48,3 +50,16 @@ def login_user(request):
     else:
         return render(request, 'login.html')
 
+def home(request):
+    #why use TMDB API for our project? there were 3 choices, TMDB, OMDB, and TVMaze. TMDB is the best, as it has built in support for filtering by rating, category, popularity, releasedate, etc, and a generous rate (50reqs/sec). only disadvantage is it doesnt integrate IMDB rating. OMDB does, but has no sorting by popularity or release date, max 1000req/day, less metadata. TV maze api is mostly for TV shows, not movies. So we are using OMDB.
+    
+    sort_by = request.GET.get('sort_by', 'popularity.desc')
+    genre = request.GET.get('genre')
+    movies = get_movies(sort_by=sort_by, genre=genre)
+    print(movies)
+    context = {
+        "movies":movies
+    }
+    return render(request, 'movies.html', context)
+
+    pass

@@ -12,18 +12,24 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+TMDB_API_KEY = "your_api_key_here"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+load_dotenv() 
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-pw0qcutp+d06=xyw5ah^vi$&_l5@)u!s&v=%2sb+pfqaweha*w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+
+TMDB_API_KEY = os.getenv("TMDB_APIKEY")
 
 ALLOWED_HOSTS = []
 

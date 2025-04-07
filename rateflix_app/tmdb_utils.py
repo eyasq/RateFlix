@@ -29,4 +29,4 @@ def get_movies(sort_by='popularity.desc', genre=None, page=1):
     return simplified_movies
 
 
-#movies returns adult:false, genre_ids, original language, title, overview, popularity, poster_path, release_date, vote_average,
+#movies returns adult:false, genre_ids, original language, title, overview, popularity, poster_path, release_date, vote_average

@@ -11,11 +11,7 @@ class SignUpForm(UserCreationForm):
 	
 	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}))
 	
-	phone = forms.CharField(label = "", max_length=15, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder':'Phone Number'}), help_text='<span class="form-text text-muted"> <small>Enter your phone number, must be unique to your account.</small></span>')
-	
-	address = forms.CharField(label="",widget=forms.Textarea(attrs={'class':'form-control','placeholder':'Your Address','rows': 3 }) ) 
 
-            
 
 	class Meta:
 		model = User

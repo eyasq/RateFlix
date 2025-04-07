@@ -3,10 +3,12 @@ from django.shortcuts import redirect, render
 from django import forms
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .tmdb_utils import get_movies
-
+from .tmdb_utils import get_movies, get_movie_details
+import json
+from .models import Movie, Favorite
 # Create your views here.
 
 def register_user(request):
@@ -63,4 +65,56 @@ def home(request):
     }
     return render(request, 'movies.html', context)
 
-    pass
+def movie_page(request, movie_id):
+    movie = get_movie_details(movie_id)
+    print(movie['details'].title, movie['details'].overview)
+    print(movie['cast'])
+    context ={
+        "movie":movie['details'],
+        "cast":movie['cast']
+    }
+    return render(request, 'movie_page.html', context)
+
+@login_required
+def add_to_favorites(request):
+    try:
+        if request.method == 'POST':
+            #recieve the data sent by the axios request
+            data = json.loads(request.body)
+            
+            #get the info from the request
+            api_id = data.get('api_id')
+            title = data.get('title')
+            poster_url = data.get('poster_url')
+            
+            #is there a movie instance in the db? if yes, proceed, if no, create one, then proceed.
+            movie, created = Movie.objects.get_or_create(
+                api_id=api_id,
+                defaults={
+                    'title': title,
+                    'poster_url': poster_url
+                }
+            )
+            
+            #did the user already favorite this, and wants to remove it?
+            favorite_exists = Favorite.objects.filter(user=request.user, movie=movie).exists()
+            
+            if favorite_exists:
+                #if he did, remove from favorites
+                Favorite.objects.filter(user=request.user, movie=movie).delete()
+                return JsonResponse({'status': 'removed', 'message': 'Movie removed from favorites'})
+            else:
+                #if he didn't, add to favorites
+                Favorite.objects.create(user=request.user, movie=movie)
+                return JsonResponse({'status': 'success', 'message': 'Movie added to favorites'})
+        
+        # If not a POST request, return an error
+        return JsonResponse({'status': 'error', 'error': 'Invalid request method'}, status=400)
+    
+    except Exception as e:
+        # debugging => dumb mistakes, dumb mistakes
+        import traceback
+        print(f"Error in add_to_favorites: {str(e)}")
+        print(traceback.format_exc())
+        
+        return JsonResponse({'status': 'error', 'error': str(e)}, status=500)

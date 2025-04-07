@@ -1,0 +1,13 @@
+.favorite-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn.favorited {
+    background-color: #ffdb58;
+    color: #333;
+    border-color: #ffc107;
+}

@@ -1,21 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Movie Details{% endblock %}
 {% block content %}
-<style>
-    .favorite-btn {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.favorite-btn.favorited {
-    background-color: #ffdb58;
-    color: #333;
-    border-color: #ffc107;
-}
-</style>
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-4 mb-4">
@@ -50,20 +35,30 @@
     <div class="col-md-8 mb-4">
       {% if user.is_authenticated %}
         <h5>Add a Review</h5>
-        <form method="POST" action="">
+        <form method="POST" id="reviewForm" action="{% url 'submit_review' %}">
           {% csrf_token %}
           <div class="form-group mb-2">
-            <textarea name="review" class="form-control" rows="3" placeholder="Write your review..."></textarea>
+            <select name="rating" class="form-control">
+              <option value="1">1 Star</option>
+              <option value="2">2 Stars</option>
+              <option value="3" selected>3 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="5">5 Stars</option>
+            </select>
           </div>
-          <button type="submit" name="submit_review" class="btn btn-primary">Submit Review</button>
+          <div class="form-group mb-2">
+            <textarea name="review" class="form-control" id="reviewText" rows="3" placeholder="Write your review..."></textarea>
+          </div>
+          <button type="submit" name="submit_review" class="btn btn-primary submit_review">Submit Review</button>
         </form>
+        <div id="reviewMessage"></div>
         <hr>
       {% endif %}
 
       <h5>Reviews</h5>
       <div>
         {% if reviews %}
-          {% for review in reviews %}
+          {% for review in reviews.all %}
             <div class="border p-2 rounded mb-2">
               <strong>{{ review.user.username }}</strong>:
               <p class="mb-0">{{ review.text }}</p>
@@ -116,7 +111,7 @@
 
       <div>
         {% if comments %}
-          {% for comment in comments %}
+          {% for comment in comments.all %}
             <div class="border p-2 rounded mb-2">
               <strong>{{ comment.user.username }}</strong>:
               <p class="mb-0">{{ comment.text }}</p>
@@ -130,62 +125,58 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../static/js/favorites.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const favoriteButtons = document.querySelectorAll('.favorite-btn');
+document.addEventListener('DOMContentLoaded', () => {
+  const reviewForm = document.getElementById('reviewForm');
+  
+  reviewForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
     
-    favoriteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            // data = name
-            const movieId = this.getAttribute('data-movie-id');
-            const movieTitle = this.getAttribute('data-movie-title');
-            const moviePoster = this.getAttribute('data-movie-poster');
-            
-            // this object, we will send data to the backend using it
-            const movieData = {
-                api_id: movieId,
-                title: movieTitle,
-                poster_url: moviePoster ? `https://image.tmdb.org/t/p/w500${moviePoster}` : null
-            };
-            
-            // grab csrf token so request isnt denied by django
-            const form = this.closest('form');
-            const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
-            
-            // add it to axios
-            axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
-            
-            // make an xios post req
-            axios.post('/add_to_favorites/', movieData)
-                .then(response => {
-                    // if success
-                    if (response.data.status === 'success') {
-                        // Change button appearance to indicate the movie is now favorited
-                        this.classList.add('favorited');
-                        this.textContent = '★ Favorited';
-                        
-                        // debug
-                        console.log('Movie added to favorites successfully!');
-                    } else if (response.data.status === 'removed') {
-                        // if success, but already added, remove
-                        this.classList.remove('favorited');
-                        this.textContent = '★ Add to Favorites';
-                        
-                        console.log('Movie removed from favorites!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error adding movie to favorites:', error);
-                    
-                    if (error.response && error.response.data.error) {
-                        console.error(error.response.data.error);
-                    }
-                });
-        });
-    });
+    const reviewText = document.getElementById('reviewText').value;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const submitBtn = reviewForm.querySelector('button[type=submit]');
+    const rating = document.querySelector('select[name=rating]').value; // Get rating
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
+    
+    try {
+      const response = await axios.post('/submit-review/', {
+        review: reviewText,
+        movie_id: {{ movie.id }},
+        rating:rating  // Pass movie ID from template
+      }, {
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      // Clear form and show success message
+      document.getElementById('reviewText').value = '';
+      document.getElementById('reviewMessage').innerHTML = `
+        <div class="alert alert-success mt-3">Review submitted successfully!</div>
+      `;
+      if (response.data.status === 'success') {
+        location.reload();
+      
+    } catch (error) {
+      document.getElementById('reviewMessage').innerHTML = `
+        <div class="alert alert-danger mt-3">Error: ${error.response?.data?.error || 'Failed to submit review'}</div>
+      `;
+    } finally {
+      // Reset button
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Submit Review';
+      
+      // Remove message after 5 seconds
+      setTimeout(() => {
+        document.getElementById('reviewMessage').innerHTML = '';
+      }, 5000);
+    }
+  });
 });
-
 </script>
-
 {% endblock %}

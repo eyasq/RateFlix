@@ -71,8 +71,7 @@ def home(request):
 
 def movie_page(request, movie_id):
     movie = get_movie_details(movie_id)
-    print(movie['details'].title, movie['details'].overview)
-    print(movie['cast'])
+
     #to loads reviews, first we have to check if there is a movie instance. if there is not, then there are no reviews. If there is a movie instance, then load all reviews associated with this movie instance.
     # movie_instance = Movie.get_object_or_404 this would break my flow if not found
     movie_instance = Movie.objects.filter(api_id = movie['details'].id).first()
@@ -124,21 +123,41 @@ def add_to_favorites(request):
     return JsonResponse({'status': 'error', 'error': 'Invalid request method'}, status=400)
 
 @require_POST
+
+@require_POST
 def submit_review(request):
     try:
         data = json.loads(request.body)
         review_text = data.get('review')
         movie_id = data.get('movie_id')
-        rating=data.get('rating')
-        
-        review = Review.objects.create(
+        rating = data.get('rating')
+
+        # get_movie_details should return structured data like:
+        # movie['details']['title'], movie['details']['poster_path']
+        movie_data = get_movie_details(movie_id)
+        details = movie_data['details']
+        title = getattr(details, 'title', None) or details.get('title')
+        poster_path = getattr(details, 'poster_path', None) or details.get('poster_path')
+
+        # Build full image URL if poster_path exists
+        poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
+
+        movie_instance, created = Movie.objects.get_or_create(
+            api_id=movie_id,
+            defaults={
+                'title': title,
+                'poster_url': poster_url
+            }
+        )
+
+        Review.objects.create(
             user=request.user,
-            movie_id=movie_id,
+            movie=movie_instance,
             body=review_text,
             rating=rating,
         )
-        
+
         return JsonResponse({'status': 'success'})
-    
+
     except Exception as e:
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)

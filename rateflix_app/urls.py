@@ -24,7 +24,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('movies/<int:movie_id>', views.movie_page, name='movie_page'),
     path('add_to_favorites/', views.add_to_favorites, name='add_to_favorites'),
-    path('submit_review', views.submit_review, name='submit_review')
+    path('submit_review/', views.submit_review, name='submit_review')
 
 
 ]

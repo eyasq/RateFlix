@@ -49,7 +49,7 @@
           <div class="form-group mb-2">
             <textarea name="review" class="form-control" id="reviewText" rows="3" placeholder="Write your review..."></textarea>
           </div>
-          <button type="submit" name="submit_review" class="btn btn-primary submit_review">Submit Review</button>
+          <button type="submit" name="submit_review" data-movie-id="{{movie.id}}" class="btn btn-primary submit_review">Submit Review</button>
         </form>
         <div id="reviewMessage"></div>
         <hr>
@@ -61,7 +61,7 @@
           {% for review in reviews.all %}
             <div class="border p-2 rounded mb-2">
               <strong>{{ review.user.username }}</strong>:
-              <p class="mb-0">{{ review.text }}</p>
+              <p class="mb-0">{{ review.body }}</p>
             </div>
           {% endfor %}
         {% else %}
@@ -136,17 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewText = document.getElementById('reviewText').value;
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const submitBtn = reviewForm.querySelector('button[type=submit]');
-    const rating = document.querySelector('select[name=rating]').value; // Get rating
+    const rating = document.querySelector('select[name=rating]').value;
+    const movieId = submitBtn.getAttribute('data-movie-id');
     
-    // Show loading state
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
     
     try {
-      const response = await axios.post('/submit-review/', {
+      const response = await axios.post('/submit_review/', {
         review: reviewText,
-        movie_id: {{ movie.id }},
-        rating:rating  // Pass movie ID from template
+        movie_id: movieId,
+        rating: rating
       }, {
         headers: {
           'X-CSRFToken': csrfToken,
@@ -154,24 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       
-      // Clear form and show success message
       document.getElementById('reviewText').value = '';
       document.getElementById('reviewMessage').innerHTML = `
         <div class="alert alert-success mt-3">Review submitted successfully!</div>
       `;
+      
       if (response.data.status === 'success') {
         location.reload();
+      }
       
     } catch (error) {
       document.getElementById('reviewMessage').innerHTML = `
-        <div class="alert alert-danger mt-3">Error: ${error.response?.data?.error || 'Failed to submit review'}</div>
-      `;
+        <div class="alert alert-danger mt-3">Error: ${error.response?.data?.error || 'Failed to submit review'}</div>`;
     } finally {
-      // Reset button
       submitBtn.disabled = false;
       submitBtn.innerHTML = 'Submit Review';
       
-      // Remove message after 5 seconds
       setTimeout(() => {
         document.getElementById('reviewMessage').innerHTML = '';
       }, 5000);

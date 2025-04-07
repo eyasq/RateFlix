@@ -22,6 +22,7 @@ def get_movies(sort_by='popularity.desc', genre=None, page=1):
         'overview':movie.overview,
         # 'genres':,
         'language':movie.original_language,
+        "id":movie.id
     } for movie in movies]
     
     print(f"Fetched {len(simplified_movies)} movies")

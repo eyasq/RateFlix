@@ -16,8 +16,12 @@
               <div class="card h-100 mt-3">
                 <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}" class="card-img-top" alt="{{movie.title}}">
                 <div class="card-body">
+                    <small class="card-text text-muted">{{movie.release_date|slice:4}}</small>
+
                   <h5 class="card-title">{{movie.title}}</h5>
-                  <p class="card-text">{{movie.overview|truncatechars:100}}</p>
+                  <h5 class="card-title">ID: {{movie.id}}</h5>
+
+                  <p class="card-text">{{movie.overview|truncatechars:100}}</p> <!-- trunatechars to maintain same height for all posters-->
                   <a href="#" class="btn btn-primary">Details</a>
                 </div>
               </div>

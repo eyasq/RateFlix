@@ -5,8 +5,11 @@ from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .tmdb_utils import get_movies
-
+from .tmdb_utils import get_movies, get_movie_details
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Movie, Favorite, Review, Comment
+import json
 # Create your views here.
 
 def register_user(request):
@@ -62,4 +65,54 @@ def home(request):
     }
     return render(request, 'movies.html', context)
 
-    pass
+def movie_page(request, movie_id):
+    movie = get_movie_details(movie_id)
+    print(movie['details'].title, movie['details'].overview)
+    print(movie['cast'])
+    #to loads reviews, first we have to check if there is a movie instance. if there is not, then there are no reviews. If there is a movie instance, then load all reviews associated with this movie instance.
+    # movie_instance = Movie.get_object_or_404 this would break my flow if not found
+    movie_instance = Movie.objects.filter(api_id = movie['details'].id).first()
+    if movie_instance:
+        reviews = movie_instance.reviews
+        comments = movie_instance.comments
+    else:
+        reviews=[]
+        comments=[]
+    context ={
+        "movie":movie['details'],
+        "cast":movie['cast'],
+        "reviews":reviews,
+        "comments":comments,
+    }
+    return render(request, 'movie_page.html', context)
+
+
+
+@login_required
+def add_to_favorites(request):
+    
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        api_id = data.get('api_id')
+        title = data.get('title')
+        poster_url = data.get('poster_url')
+        
+        movie, created = Movie.objects.get_or_create(
+            api_id=api_id,
+            defaults={
+                'title': title,
+                'poster_url': poster_url
+            }
+        )
+        
+        favorite_exists = Favorite.objects.filter(user=request.user, movie=movie).exists()
+        
+        if favorite_exists:
+            Favorite.objects.filter(user=request.user, movie=movie).delete()
+            return JsonResponse({'status': 'removed', 'message': 'Movie removed from favorites'})
+        else:
+            Favorite.objects.create(user=request.user, movie=movie)
+            return JsonResponse({'status': 'success', 'message': 'Movie added to favorites'})
+    
+    return JsonResponse({'status': 'error', 'error': 'Invalid request method'}, status=400)

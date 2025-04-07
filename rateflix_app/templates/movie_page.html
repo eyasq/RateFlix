@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Movie Details{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{ movie.poster_path }}" class="card-img-top" alt="{{ movie.title }}">
+        <div class="card-body">
+          <small class="text-muted">{{ movie.release_date|slice:":4" }}</small>
+          <h4 class="card-title">{{ movie.title }}</h4>
+          <p><strong>ID:</strong> {{ movie.id }}</p>
+          <p class="card-text">{{ movie.overview }}</p>
+
+          {% if user.is_authenticated %}
+            {% if movie.id in user_favorite_ids %}
+              <button class="btn btn-warning mt-2" disabled>★ Favorited</button>
+            {% else %}
+              <form method="POST" action="#">
+                {% csrf_token %}
+                {% if movie.id in user_favorites %}
+                <button type="submit" class="btn mt-2 favorite-btn favorited" data-movie-id="{{movie.id}}" data-movie-title="{{movie.title}}" data-movie-poster="{{movie.poster_path}}">★ Favorited</button>
+              {% else %}
+              <button type="submit" class="btn mt-2 favorite-btn" data-movie-id="{{movie.id}}" data-movie-title="{{movie.title}}" data-movie-poster="{{movie.poster_path}}">★ Add to Favorites</button>
+              {% endif %}
+ 
+              </form>
+            {% endif %}
+          {% endif %}
+          <!-- add to favorites logic -> should be done using AJAX. When a user adds a movie to the favorites, check if a movice instance exists in DB, if not, make one, then add the movie instance to the users favorites. must add javascript code for async handling no refresh, and a view function to handle this. -->
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+      {% if user.is_authenticated %}
+        <h5>Add a Review</h5>
+        <form method="POST" action="">
+          {% csrf_token %}
+          <div class="form-group mb-2">
+            <textarea name="review" class="form-control" rows="3" placeholder="Write your review..."></textarea>
+          </div>
+          <button type="submit" name="submit_review" class="btn btn-primary">Submit Review</button>
+        </form>
+        <hr>
+      {% endif %}
+
+      <h5>Reviews</h5>
+      <div>
+        {% if reviews %}
+          {% for review in reviews %}
+            <div class="border p-2 rounded mb-2">
+              <strong>{{ review.user.username }}</strong>:
+              <p class="mb-0">{{ review.text }}</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted">No reviews yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <h4>Top Cast</h4>
+      <div class="row">
+        {% for actor in cast %}
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+          <div class="card h-100 text-center">
+            {% if actor.profile_path %}
+              <img src="https://image.tmdb.org/t/p/w300{{ actor.profile_path }}" class="card-img-top" alt="{{ actor.name }}">
+            {% else %}
+              <img src="https://via.placeholder.com/300x450?text=No+Image" class="card-img-top" alt="{{ actor.name }}">
+            {% endif %}
+            <div class="card-body p-2">
+              <h6 class="card-title mb-1">{{ actor.name }}</h6>
+              <p class="card-text text-muted mb-0" style="font-size: 0.8rem;">{{ actor.character }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <h4>Comments</h4>
+
+      {% if user.is_authenticated %}
+        <form method="POST" action="">
+          {% csrf_token %}
+          <div class="form-group mb-2">
+            <textarea name="comment" class="form-control" rows="2" placeholder="Add a comment..."></textarea>
+          </div>
+          <button type="submit" name="submit_comment" class="btn btn-secondary">Post Comment</button>
+        </form>
+        <hr>
+      {% endif %}
+
+      <div>
+        {% if comments %}
+          {% for comment in comments %}
+            <div class="border p-2 rounded mb-2">
+              <strong>{{ comment.user.username }}</strong>:
+              <p class="mb-0">{{ comment.text }}</p>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted">No comments yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../static/js/favorites.js"></script>
+
+{% endblock %}

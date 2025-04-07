@@ -9,6 +9,8 @@ from .tmdb_utils import get_movies, get_movie_details
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
+from django.views.decorators.http import require_POST
+
 import json
 # Create your views here.
 
@@ -78,11 +80,13 @@ def movie_page(request, movie_id):
     else:
         reviews=[]
         comments=[]
+    user_favorites = request.user.favorites.values_list('movie__api_id', flat=True) if request.user.is_authenticated else[]
     context ={
         "movie":movie['details'],
         "cast":movie['cast'],
         "reviews":reviews,
         "comments":comments,
+        "user_favorites":list(user_favorites)
     }
     return render(request, 'movie_page.html', context)
 
@@ -116,3 +120,23 @@ def add_to_favorites(request):
             return JsonResponse({'status': 'success', 'message': 'Movie added to favorites'})
     
     return JsonResponse({'status': 'error', 'error': 'Invalid request method'}, status=400)
+
+@require_POST
+def submit_review(request):
+    try:
+        data = json.loads(request.body)
+        review_text = data.get('review')
+        movie_id = data.get('movie_id')
+        rating=data.get('rating')
+        
+        review = Review.objects.create(
+            user=request.user,
+            movie_id=movie_id,
+            body=review_text,
+            rating=rating,
+        )
+        
+        return JsonResponse({'status': 'success'})
+    
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'error': str(e)}, status=400)

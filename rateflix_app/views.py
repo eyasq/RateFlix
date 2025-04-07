@@ -58,7 +58,8 @@ def home(request):
     movies = get_movies(sort_by=sort_by, genre=genre)
     print(movies)
     context = {
-        "movies":movies
+        "movies":movies,
+        
     }
     return render(request, 'movies.html', context)
 

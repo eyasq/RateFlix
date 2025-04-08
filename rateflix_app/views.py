@@ -71,23 +71,28 @@ def home(request):
 
 def movie_page(request, movie_id):
     movie = get_movie_details(movie_id)
-
-    #to loads reviews, first we have to check if there is a movie instance. if there is not, then there are no reviews. If there is a movie instance, then load all reviews associated with this movie instance.
-    # movie_instance = Movie.get_object_or_404 this would break my flow if not found
-    movie_instance = Movie.objects.filter(api_id = movie['details'].id).first()
+    movie_api_id = movie['details'].id  
+    
+    
+    movie_instance = Movie.objects.filter(api_id=movie_api_id).first()
     if movie_instance:
-        reviews = movie_instance.reviews.all
-        comments = movie_instance.comments.all
+        reviews = movie_instance.reviews.all()
+        comments = movie_instance.comments.all()
     else:
-        reviews=[]
-        comments=[]
-    user_favorites = request.user.favorites.values_list('movie__api_id', flat=True) if request.user.is_authenticated else[]
-    context ={
-        "movie":movie['details'],
-        "cast":movie['cast'],
-        "reviews":reviews,
-        "comments":comments,
-        "user_favorites":list(user_favorites)
+        reviews = []
+        comments = []
+    
+    user_favorite_ids = []
+    if request.user.is_authenticated:
+        user_favorite_ids = [str(id) for id in request.user.favorites.values_list('movie__api_id', flat=True)]
+    is_favorited = str(movie_api_id) in user_favorite_ids
+    context = {
+        "movie": movie['details'],
+        "cast": movie['cast'],
+        "reviews": reviews,
+        "comments": comments,
+        "user_favorite_ids": user_favorite_ids,
+        "is_favorited": is_favorited
     }
     return render(request, 'movie_page.html', context)
 
@@ -95,33 +100,47 @@ def movie_page(request, movie_id):
 
 @login_required
 def add_to_favorites(request):
-    
     if request.method == 'POST':
-        data = json.loads(request.body)
-        
-        api_id = data.get('api_id')
-        title = data.get('title')
-        poster_url = data.get('poster_url')
-        
-        movie, created = Movie.objects.get_or_create(
-            api_id=api_id,
-            defaults={
-                'title': title,
-                'poster_url': poster_url
-            }
-        )
-        
-        favorite_exists = Favorite.objects.filter(user=request.user, movie=movie).exists()
-        
-        if favorite_exists:
-            Favorite.objects.filter(user=request.user, movie=movie).delete()
-            return JsonResponse({'status': 'removed', 'message': 'Movie removed from favorites'})
-        else:
-            Favorite.objects.create(user=request.user, movie=movie)
-            return JsonResponse({'status': 'success', 'message': 'Movie added to favorites'})
+        try:
+            # Parse the request body and handle potential JSON decode errors
+            data = json.loads(request.body.decode('utf-8'))
+            
+            api_id = data.get('api_id')
+            title = data.get('title')
+            poster_url = data.get('poster_url')
+
+            # Add debug print to verify data
+            print(f"Adding to favorites: {api_id}, {title}")
+            
+            # Ensure api_id is the correct type
+            if api_id:
+                movie, created = Movie.objects.get_or_create(
+                    api_id=api_id,
+                    defaults={
+                        'title': title,
+                        'poster_url': poster_url
+                    }
+                )
+                
+                favorite_exists = Favorite.objects.filter(user=request.user, movie=movie).exists()
+                
+                if favorite_exists:
+                    # Remove from favorites
+                    Favorite.objects.filter(user=request.user, movie=movie).delete()
+                    return JsonResponse({'status': 'removed', 'message': 'Movie removed from favorites'})
+                else:
+                    # Add to favorites
+                    Favorite.objects.create(user=request.user, movie=movie)
+                    return JsonResponse({'status': 'success', 'message': 'Movie added to favorites'})
+            else:
+                return JsonResponse({'status': 'error', 'error': 'Missing movie ID'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'error': 'Invalid JSON in request body'}, status=400)
+        except Exception as e:
+            print(f"Error in add_to_favorites: {str(e)}")
+            return JsonResponse({'status': 'error', 'error': str(e)}, status=500)
     
     return JsonResponse({'status': 'error', 'error': 'Invalid request method'}, status=400)
-
 
 @login_required
 @require_POST

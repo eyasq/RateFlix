@@ -13,20 +13,15 @@
           <p class="card-text">{{ movie.overview }}</p>
 
           {% if user.is_authenticated %}
-            {% if movie.id in user_favorite_ids %}
-              <button class="btn btn-warning mt-2" disabled>★ Favorited</button>
+          <form method="POST" action="#">
+            {% csrf_token %}
+            {% if is_favorited %}
+              <button type="submit" class="btn mt-2 favorite-btn favorited" data-movie-id="{{ movie.id }}" data-movie-title="{{ movie.title }}" data-movie-poster="{{ movie.poster_path }}">★ Favorited</button>
             {% else %}
-              <form method="POST" action="#">
-                {% csrf_token %}
-                {% if movie.id in user_favorites %}
-                <button type="submit" class="btn mt-2 favorite-btn favorited" data-movie-id="{{movie.id}}" data-movie-title="{{movie.title}}" data-movie-poster="{{movie.poster_path}}">★ Favorited</button>
-              {% else %}
-              <button type="submit" class="btn mt-2 favorite-btn" data-movie-id="{{movie.id}}" data-movie-title="{{movie.title}}" data-movie-poster="{{movie.poster_path}}">★ Add to Favorites</button>
-              {% endif %}
- 
-              </form>
+              <button type="submit" class="btn mt-2 favorite-btn" data-movie-id="{{ movie.id }}" data-movie-title="{{ movie.title }}" data-movie-poster="{{ movie.poster_path }}">★ Add to Favorites</button>
             {% endif %}
-          {% endif %}
+          </form>
+        {% endif %}
           <!-- add to favorites logic -> should be done using AJAX. When a user adds a movie to the favorites, check if a movice instance exists in DB, if not, make one, then add the movie instance to the users favorites. must add javascript code for async handling no refresh, and a view function to handle this. -->
         </div>
       </div>

@@ -62,6 +62,8 @@
             <div class="border p-2 rounded mb-2">
               <strong>{{ review.user.username }}</strong>:
               <p class="mb-0">{{ review.body }}</p>
+              <p class="mb-0">{{ review.rating }} Stars</p>
+
             </div>
           {% endfor %}
         {% else %}
@@ -114,7 +116,7 @@
           {% for comment in comments.all %}
             <div class="border p-2 rounded mb-2">
               <strong>{{ comment.user.username }}</strong>:
-              <p class="mb-0">{{ comment.text }}</p>
+              <p class="mb-0">{{ comment.body }}</p>
             </div>
           {% endfor %}
         {% else %}

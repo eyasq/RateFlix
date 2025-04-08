@@ -132,14 +132,11 @@ def submit_review(request):
         movie_id = data.get('movie_id')
         rating = data.get('rating')
 
-        # get_movie_details should return structured data like:
-        # movie['details']['title'], movie['details']['poster_path']
         movie_data = get_movie_details(movie_id)
         details = movie_data['details']
-        title = getattr(details, 'title', None) or details.get('title')
-        poster_path = getattr(details, 'poster_path', None) or details.get('poster_path')
+        title =  details.get('title')
+        poster_path = details.get('poster_path')
 
-        # Build full image URL if poster_path exists
         poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
 
         movie_instance, created = Movie.objects.get_or_create(
@@ -161,3 +158,29 @@ def submit_review(request):
 
     except Exception as e:
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
+    
+@require_POST
+@login_required
+def submit_comment(request):
+    try:
+        data = json.loads(request.body)
+        comment_text = data.get('comment')
+        movie_id = data.get('movie_id')
+        movie_data = get_movie_details('movie_id')
+        title = movie_data['details'].get('title')
+        poster_url = movie_data['details'].get('poster_url')
+        movie_instance, created = Movie.objects.get_or_create(
+            api_id = movie_id,
+            defaults={
+                'title':title,
+                'poster_url':poster_url
+            }
+        )
+        comment = Comment.objects.create(
+            user = request.user,
+            movie = movie_instance,
+            body = comment_text
+        )
+        return JsonResponse({'status':'Comment posted Successfully'})
+    except Exception as e:
+        return JsonResponse({'status':'Comment submission failed', 'error':str(e)}, status=400)

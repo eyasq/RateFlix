@@ -159,14 +159,25 @@ def submit_review(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
     
+@login_required
+def delete_review(request, review_id):
+    review = Review.objects.filter(id = review_id).first()
+    movie = review.movie
+    if request.user == review.user:
+        review.delete()
+        messages.success(request, 'Review succesfully deleted')
+        return redirect(f'/movies/{movie.api_id}')
+    
+
 
 @login_required
 def delete_comment(request, comment_id):
     comment = Comment.objects.filter(id = comment_id).first()
+    movie = comment.movie
     if request.user == comment.user:
         comment.delete()
         messages.success(request, 'Comment succesfully deleted')
-        return redirect('/')
+        return redirect(f'/movies/{movie.api_id}')
     
 
 

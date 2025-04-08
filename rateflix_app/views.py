@@ -76,8 +76,8 @@ def movie_page(request, movie_id):
     # movie_instance = Movie.get_object_or_404 this would break my flow if not found
     movie_instance = Movie.objects.filter(api_id = movie['details'].id).first()
     if movie_instance:
-        reviews = movie_instance.reviews
-        comments = movie_instance.comments
+        reviews = movie_instance.reviews.all
+        comments = movie_instance.comments.all
     else:
         reviews=[]
         comments=[]
@@ -122,8 +122,8 @@ def add_to_favorites(request):
     
     return JsonResponse({'status': 'error', 'error': 'Invalid request method'}, status=400)
 
-@require_POST
 
+@login_required
 @require_POST
 def submit_review(request):
     try:
@@ -166,7 +166,7 @@ def submit_comment(request):
         data = json.loads(request.body)
         comment_text = data.get('comment')
         movie_id = data.get('movie_id')
-        movie_data = get_movie_details('movie_id')
+        movie_data = get_movie_details(movie_id)
         title = movie_data['details'].get('title')
         poster_url = movie_data['details'].get('poster_url')
         movie_instance, created = Movie.objects.get_or_create(
@@ -184,3 +184,19 @@ def submit_comment(request):
         return JsonResponse({'status':'Comment posted Successfully'})
     except Exception as e:
         return JsonResponse({'status':'Comment submission failed', 'error':str(e)}, status=400)
+    
+
+
+
+
+
+
+
+
+
+
+@login_required
+def logout_user(request):
+    logout(request)
+    messages.success(request, 'Successfully logged out')
+    return redirect('/')

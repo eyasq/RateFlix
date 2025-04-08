@@ -26,6 +26,7 @@ urlpatterns = [
     path('add_to_favorites/', views.add_to_favorites, name='add_to_favorites'),
     path('submit_review/', views.submit_review, name='submit_review'),
     path('submit_comment/', views.submit_comment, name='submit_comment'),
+    path('comments/delete/<int:comment_id>', views.delete_comment, name='delete_comment'),
     path('logout', views.logout_user, name='logout')
 
 

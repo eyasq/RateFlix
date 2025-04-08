@@ -118,7 +118,10 @@
           {% for comment in comments.all %}
             <div class="border p-2 rounded mb-2">
               <strong>{{ comment.user.username }}</strong>:
-              <p class="mb-0">{{ comment.body }}</p>
+              <p class="mb-2">{{ comment.body }}</p>
+              {% if request.user == comment.user %}
+              <button class="btn btn-danger btn-sm"><a class="utilLink" href="/comments/delete/{{comment.id}}">Delete Comment</a></button>
+              {% endif %}
             </div>
           {% endfor %}
         {% else %}

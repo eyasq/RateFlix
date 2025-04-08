@@ -159,6 +159,17 @@ def submit_review(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
     
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = Comment.objects.filter(id = comment_id).first()
+    if request.user == comment.user:
+        comment.delete()
+        messages.success(request, 'Comment succesfully deleted')
+        return redirect('/')
+    
+
+
 @require_POST
 @login_required
 def submit_comment(request):

@@ -228,7 +228,7 @@ def submit_comment(request):
             movie = movie_instance,
             body = comment_text
         )
-        return JsonResponse({'status':'Comment posted Successfully'})
+        return JsonResponse({'status':'success'})
     except Exception as e:
         return JsonResponse({'status':'Comment submission failed', 'error':str(e)}, status=400)
     

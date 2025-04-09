@@ -243,4 +243,11 @@ def logout_user(request):
     return redirect('/')
 
 def profile(request):
-    return render(request, 'profile.html')
+    other_user = User.objects.filter(username='someone_else').first()
+    affinity_score = 78
+    context={
+        'user':request.user,
+        'other_user':other_user,
+        'affinity_score':affinity_score
+    }
+    return render(request, 'profile.html',context)

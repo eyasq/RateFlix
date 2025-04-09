@@ -2,13 +2,43 @@
 {% block title %}Movies{% endblock %}
 {% block content %}
 
-        <header class="bg-dark py-5">
-
-        </header>
-        
-
-        <div class="container my-5">
-            <span class="mb-5">Sort By: <select name="" id=""></select></span>
+  <div class="container my-5">
+          <form id="filter-form" method="GET" action="#">
+            <span class="mb-5">Sort By: 
+                <select name="sort_by" id="sort-select">
+                    <option value="popularity.desc" {% if current_sort == "popularity.desc" %}selected{% endif %}>Popularity</option>
+                    <option value="vote_average.desc" {% if current_sort == "vote_average.desc" %}selected{% endif %}>Rating</option>
+                    <option value="release_date.desc" {% if current_sort == "release_date.desc" %}selected{% endif %}>Newest Releases</option>
+                    <option value="revenue.desc" {% if current_sort == "revenue.desc" %}selected{% endif %}>Highest Grossing</option>
+                </select>
+            </span>
+            
+            <span class="mb-5 ml-3">Genre: 
+                <select name="genre" id="genre-select">
+                    <option value="">All Genres</option>
+                    <option value="28" {% if current_genre == "28" %}selected{% endif %}>Action</option>
+                    <option value="12" {% if current_genre == "12" %}selected{% endif %}>Adventure</option>
+                    <option value="16" {% if current_genre == "16" %}selected{% endif %}>Comedy</option>
+                    <option value="35" {% if current_genre == "35" %}selected{% endif %}>Crime</option>
+                    <option value="80" {% if current_genre == "80" %}selected{% endif %}>Documentary</option>
+                    <option value="99" {% if current_genre == "99" %}selected{% endif %}>Drama</option>
+                    <option value="18" {% if current_genre == "18" %}selected{% endif %}>Family</option>
+                    <option value="10751" {% if current_genre == "10751" %}selected{% endif %}>Fantasy</option>
+                    <option value="14" {% if current_genre == "14" %}selected{% endif %}>History</option>
+                    <option value="36" {% if current_genre == "36" %}selected{% endif %}>Horror</option>
+                    <option value="27" {% if current_genre == "27" %}selected{% endif %}>Music</option>
+                    <option value="10402" {% if current_genre == "10402" %}selected{% endif %}>Mystery</option>
+                    <option value="9648" {% if current_genre == "9648" %}selected{% endif %}>Romance</option>
+                    <option value="10749" {% if current_genre == "10749" %}selected{% endif %}>Romance</option>
+                    <option value="878" {% if current_genre == "878" %}selected{% endif %}>SciFi</option>
+                    <option value="53" {% if current_genre == "53" %}selected{% endif %}>Thriller</option>
+                    <option value="10752" {% if current_genre == "10752" %}selected{% endif %}>War</option>
+                </select>
+            </span>
+            
+            <button type="submit" class="btn btn-primary ml-3">Apply Filters</button>
+        </form>
+            
           <div class="row" id="movies-container">
             {% for movie in movies %}
             <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
@@ -31,4 +61,5 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="../static/js/loadMore.js"></script>
+        <script src="../static/js/genre.js"></script>
 {% endblock %}

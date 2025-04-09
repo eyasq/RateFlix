@@ -70,7 +70,9 @@ def home(request):
     print(movies)
     context = {
         "movies":movies,
-        "next_page":page + 1
+        "next_page":page + 1,
+        "current_genre":genre,
+        "current_sort":sort_by
         
     }
     return render(request, 'movies.html', context)

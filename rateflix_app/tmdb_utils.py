@@ -6,12 +6,14 @@ tmdb.api_key = TMDB_API_KEY
 
 def get_movies(sort_by='popularity.desc', genre=None, page=1):
     discover = Discover()
-    movies = discover.discover_movies({
-        'sort_by': sort_by,
-        'page': page,
-        'per_page': 20,
-        
-    })
+    params = {
+        'sort_by':sort_by,
+        'page':page,
+        'per_page':20,
+    }
+    if genre:
+        params['with_genres'] = genre
+    movies = discover.discover_movies(params)
     simplified_movies = [{
         'title': movie.title,
         'rating': movie.vote_average,

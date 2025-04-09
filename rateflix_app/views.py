@@ -61,10 +61,16 @@ def home(request):
     
     sort_by = request.GET.get('sort_by', 'popularity.desc')
     genre = request.GET.get('genre')
-    movies = get_movies(sort_by=sort_by, genre=genre)
+    page = request.GET.get('page', 1)
+    try:
+        page = int(page)
+    except (TypeError, ValueError):
+        page = 1
+    movies = get_movies(sort_by=sort_by, genre=genre, page=page)
     print(movies)
     context = {
         "movies":movies,
+        "next_page":page + 1
         
     }
     return render(request, 'movies.html', context)
@@ -228,18 +234,11 @@ def submit_comment(request):
     
 
 
-
-
-
-
-
-
-
-
 @login_required
 def logout_user(request):
     logout(request)
     messages.success(request, 'Successfully logged out')
     return redirect('/')
+
 def profile(request):
     return render(request, 'profile.html')

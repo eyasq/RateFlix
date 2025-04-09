@@ -9,10 +9,9 @@ def get_movies(sort_by='popularity.desc', genre=None, page=1):
     movies = discover.discover_movies({
         'sort_by': sort_by,
         'page': page,
-        'per_page': 50,
+        'per_page': 20,
         
     })
-    
     simplified_movies = [{
         'title': movie.title,
         'rating': movie.vote_average,

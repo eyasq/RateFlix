@@ -280,9 +280,10 @@ def other_profile_(request, profile_id):
 def delete_review(request,review_id):
     review = Review.objects.get(id = review_id)
     movie = review.movie
+    movie_res = search_movie(movie.title)
     if request.user == review.user:
         review.delete()
     else:
         messages.error(request, "You are not authorized to delete this review")
         return redirect('/')
-    return redirect(f'/movies/{movie.id}')
+    return redirect(f'/movies/{movie_res[0].id}')

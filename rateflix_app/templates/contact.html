@@ -1,35 +1,33 @@
 {% extends 'base.html' %}
-
 {% block title %}Contact Us{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-  <h2>Contact Us</h2>
+  <h2 class="mb-3">Contact Us</h2>
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
+  <p>If you have any questions or feedback, feel free to reach us directly at:
+    <strong><a href="mailto:rateflix.project@gmail.com">rateflix.project@gmail.com</a></strong>
+  </p>
 
-  <form method="POST">
+  <hr>
+
+  <form method="POST" action="{% url 'contact' %}">
     {% csrf_token %}
-    <div class="mb-3">
-      <label class="form-label">Name</label>
-      <input type="text" name="name" class="form-control" required>
+    <div class="form-group mb-3">
+      <label for="name">Your Name</label>
+      <input type="text" class="form-control" name="name" required>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-control" required>
+
+    <div class="form-group mb-3">
+      <label for="email">Your Email</label>
+      <input type="email" class="form-control" name="email" required>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Subject</label>
-      <input type="text" name="subject" class="form-control" required>
+
+    <div class="form-group mb-3">
+      <label for="message">Your Message</label>
+      <textarea class="form-control" name="message" rows="5" required></textarea>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Message</label>
-      <textarea name="message" class="form-control" rows="4" required></textarea>
-    </div>
+
     <button type="submit" class="btn btn-primary">Send Message</button>
   </form>
 </div>

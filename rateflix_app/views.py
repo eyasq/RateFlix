@@ -391,3 +391,22 @@ def search(request):
             messages.error(request, "Please enter a search query.")
             return redirect('/')
     return redirect('/')
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        if name and email and message:
+            send_mail(
+                subject=f"Contact Form Submission from {name}",
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.DEFAULT_FROM_EMAIL],
+            )
+            messages.success(request, "Message sent successfully!")
+            return redirect('contact')
+        else:
+            messages.error(request, "All fields are required.")
+    
+    return render(request, 'contact.html')

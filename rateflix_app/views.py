@@ -381,3 +381,13 @@ def actors_movies(request, actor_id):
 
 def about(request):
     return render (request,'about.html')
+def search(request):
+    if request.method == 'POST':
+        query = request.POST.get('title')
+        if query:
+            results = search_movie(query)  # This uses your TMDb utility
+            return render(request, 'search_results.html', {'query': query, 'results': results})
+        else:
+            messages.error(request, "Please enter a search query.")
+            return redirect('/')
+    return redirect('/')

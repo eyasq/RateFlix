@@ -12,6 +12,10 @@ from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
 import json
+import os
+from openai import OpenAI  # type: ignore
+from dotenv import load_dotenv # type: ignore
+
 # Create your views here.
 def search(request):
     title = request.POST.get('title')
@@ -287,3 +291,47 @@ def delete_review(request,review_id):
         messages.error(request, "You are not authorized to delete this review")
         return redirect('/')
     return redirect(f'/movies/{movie_res[0].id}')
+@require_POST
+def recommend(request):
+    user = User.objects.get(id = request.POST.get('data'))
+    user_favorites = list(user.favorites.all().values_list('movie', flat=True))
+    print(user_favorites)
+    user_reviews = user.reviews.all()
+    ratings = []
+    for review in user_reviews:
+        ratings.append({
+            "title":review.movie.title,
+            "rating":review.rating,
+        })
+    user_data = {
+        "username":user.username,
+        "favorites":user_favorites,
+        "ratings":ratings
+    }
+    prompt = f"""
+    Recommend 3 movies based on these user preferences:
+    Favorites: {user_data['favorites']}
+    Ratings: {user_data['ratings']}
+    
+    Rules:
+    - Suggest diverse genres but prioritize similar vibes.
+    - Avoid movies the user rated poorly.
+    - Format as a bulleted list with 1-sentence explanations.
+    """
+    client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.getenv("OPENAI_API_KEY")
+    )
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "developer", "content": "Talk like a pirate."},
+        {
+            "role": "user",
+            "content": "How do I check if a Python object is an instance of a class?",
+        },
+    ],
+    )
+    print(completion.choices[0].message.content)
+    res = completion.choices[0].message.content
+    return HttpResponse(res)

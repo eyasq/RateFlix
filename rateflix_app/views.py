@@ -13,9 +13,11 @@ from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
 import json
 import os
-from openai import OpenAI  # type: ignore
+from mistralai import Mistral # type: ignore
 from dotenv import load_dotenv # type: ignore
 
+
+load_dotenv()  # take environment variables
 # Create your views here.
 def search(request):
     title = request.POST.get('title')
@@ -292,46 +294,81 @@ def delete_review(request,review_id):
         return redirect('/')
     return redirect(f'/movies/{movie_res[0].id}')
 @require_POST
+@login_required
 def recommend(request):
-    user = User.objects.get(id = request.POST.get('data'))
-    user_favorites = list(user.favorites.all().values_list('movie', flat=True))
-    print(user_favorites)
-    user_reviews = user.reviews.all()
-    ratings = []
-    for review in user_reviews:
-        ratings.append({
-            "title":review.movie.title,
-            "rating":review.rating,
-        })
-    user_data = {
-        "username":user.username,
-        "favorites":user_favorites,
-        "ratings":ratings
-    }
-    prompt = f"""
-    Recommend 3 movies based on these user preferences:
-    Favorites: {user_data['favorites']}
-    Ratings: {user_data['ratings']}
-    
-    Rules:
-    - Suggest diverse genres but prioritize similar vibes.
-    - Avoid movies the user rated poorly.
-    - Format as a bulleted list with 1-sentence explanations.
-    """
-    client = OpenAI(
-    # This is the default and can be omitted
-    api_key=os.getenv("OPENAI_API_KEY")
-    )
-    completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "developer", "content": "Talk like a pirate."},
-        {
-            "role": "user",
-            "content": "How do I check if a Python object is an instance of a class?",
-        },
-    ],
-    )
-    print(completion.choices[0].message.content)
-    res = completion.choices[0].message.content
-    return HttpResponse(res)
+    try:
+        
+        user_id = request.POST.get('data')
+        user = User.objects.get(id=user_id)
+        
+        try:
+            user_favorites = list(user.favorites.all().values_list('movie__title', flat=True))
+            print(f"User favorites: {user_favorites}")
+        except Exception as e:
+            print(f"Error fetching favorites: {str(e)}")
+            user_favorites = []
+        
+        try:
+            user_reviews = user.reviews.all()
+            ratings = []
+            for review in user_reviews:
+                ratings.append({
+                    "title": review.movie.title,
+                    "rating": review.rating,
+                })
+            print(f"User ratings: {ratings}")
+        except Exception as e:
+            print(f"Error fetching reviews: {str(e)}")
+            ratings = []
+            
+        user_data = {
+            "username": user.username,
+            "favorites": user_favorites,
+            "ratings": ratings
+        }
+        
+        prompt = f"""
+        Recommend 3 movies based on these user preferences:
+        Favorites: {user_data['favorites']}
+        Ratings: {user_data['ratings']}
+
+        Rules:
+        - Suggest diverse genres but prioritize similar vibes.
+        - Avoid movies the user rated poorly.
+        - Format as a bulleted list with 1-sentence explanations.
+        """
+        
+        api_key = os.getenv('MISTRAL_API_KEY')        
+        model = "mistral-large-latest"
+        client = Mistral(api_key=api_key)
+        
+        try:
+            print("Sending request to Mistral API")
+            # Add a timeout to prevent hanging
+            chat_response = client.chat.complete(
+                model=model,
+                messages=[
+                    {"role": "system", "content": "You are a movie recommendation engine."},  
+                    {"role": "user", "content": prompt}, 
+                ],
+            )
+            ai_response = chat_response.choices[0].message.content
+            
+            return JsonResponse({
+                "status": "success",
+                "recommendations": ai_response
+            })
+        except Exception as e:
+            print(f"Error calling Mistral API: {str(e)}")
+            return JsonResponse({
+                "status": "error",
+                "message": f"AI service error: {str(e)}"
+            }, status=500)
+        
+   
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return JsonResponse({
+            "status": "error",
+            "message": f"Server error: {str(e)}"
+        }, status=500)

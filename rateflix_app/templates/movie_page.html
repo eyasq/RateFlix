@@ -60,7 +60,9 @@
               <p class="mb-0">{{ review.rating }} Stars</p>
 
             </div>
+            {% if request.user == review.user %}
             <button class="btn btn-danger btn-sm"><a class="utilLink" href="/reviews/delete/{{review.id}}">Delete Review</a></button>
+            {%endif %}
 
           {% endfor %}
         {% else %}

@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .tmdb_utils import get_movies, get_movie_details, search_movie
+from .tmdb_utils import get_movies, get_movie_details, search_movie, actor_movies
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
@@ -328,7 +328,7 @@ def recommend(request):
         }
         
         prompt = f"""
-        Recommend 3 movies based on these user preferences:
+        Recommend 5 movies based on these user preferences:
         Favorites: {user_data['favorites']}
         Ratings: {user_data['ratings']}
 
@@ -372,3 +372,12 @@ def recommend(request):
             "status": "error",
             "message": f"Server error: {str(e)}"
         }, status=500)
+    
+def actors_movies(request, actor_id):
+    _credits = actor_movies(actor_id)
+    context = {
+        "actor": _credits.get('actor_details'),
+        "movies":_credits.get('movie_credits')
+    }
+    print(_credits['actor_details'])
+    return render(request, 'actorsmovies.html', context)

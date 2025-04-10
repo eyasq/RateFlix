@@ -1,5 +1,5 @@
 from RateFlix.settings import TMDB_API_KEY
-from tmdbv3api import TMDb, Discover, Movie # type: ignore
+from tmdbv3api import TMDb, Discover, Movie, Person # type: ignore
 import json
 tmdb = TMDb()
 tmdb.api_key = TMDB_API_KEY
@@ -50,3 +50,14 @@ def search_movie(title):
     movie = Movie()
     search_res = movie.search(title)
     return search_res
+
+def actor_movies(actor_id):
+    person = Person()
+    actor_details = person.details(actor_id)
+    actor_credits = person.movie_credits(actor_id) 
+    movie_credits = actor_credits.cast #automaticaly sorted by popularity.desc
+    credits_dict = {
+        "actor_details": actor_details,
+        "movie_credits": movie_credits
+    }
+    return credits_dict

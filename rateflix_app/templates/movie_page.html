@@ -91,7 +91,7 @@
               <img src="https://via.placeholder.com/300x450?text=No+Image" class="card-img-top" alt="{{ actor.name }}">
             {% endif %}
             <div class="card-body p-2">
-              <h6 class="card-title mb-1">{{ actor.name }}</h6>
+              <h6 class="card-title mb-1"><a id="ActorHl" href="/actor/{{actor.id}}">{{ actor.name }}</a></h6>
               <p class="card-text text-muted mb-0" style="font-size: 0.8rem;">{{ actor.character }}</p>
             </div>
           </div>

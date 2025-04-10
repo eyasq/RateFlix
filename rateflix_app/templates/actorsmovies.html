@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}{{actor.name}} - Movies{% endblock %}
+{% block content %}
+
+<div class="container my-5">
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="card shadow-lg">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        {% if actor.profile_path %}
+                            <img src="https://image.tmdb.org/t/p/w780{{actor.profile_path}}" class="img-fluid rounded-start h-100" alt="{{actor.name}}" style="object-fit: cover;">
+                        {% else %}
+                            <img src="https://via.placeholder.com/780x1170?text=No+Image" class="img-fluid rounded-start" alt="{{actor.name}}">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h1 class="card-title">{{actor.name}}</h1>
+                            
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                {% if actor.birthday %}
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-birthday-cake me-1"></i> Born: {{actor.birthday}}
+                                    </span>
+                                {% endif %}
+                                
+                                {% if actor.place_of_birth %}
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-map-marker-alt me-1"></i> {{actor.place_of_birth}}
+                                    </span>
+                                {% endif %}
+                                
+                                {% if actor.known_for_department %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-star me-1"></i> {{actor.known_for_department}}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if actor.biography %}
+                                <div class="mb-4">
+                                    <h5>Biography</h5>
+                                    <p class="card-text">{{actor.biography}}</p>
+                                </div>
+                            {% endif %}
+                            
+                            {% if actor.also_known_as %}
+                                <div class="mb-3">
+                                    <h6>Also Known As</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for name in actor.also_known_as %}
+                                            <span class="badge bg-light text-dark">{{name}}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-flex gap-3">
+                                {% if actor.imdb_id %}
+                                    <a href="https://www.imdb.com/name/{{actor.imdb_id}}" target="_blank" class="btn btn-warning">
+                                        <i class="fab fa-imdb"></i> IMDB
+                                    </a>
+                                {% endif %}
+                                
+                                {% if actor.homepage %}
+                                    <a href="{{actor.homepage}}" target="_blank" class="btn btn-info">
+                                        <i class="fas fa-globe"></i> Official Website
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-4">{{actor.name}}'s Movies</h2>
+    <div class="row" id="movies-container">
+        {% for movie in movies %}
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if movie.poster_path %}
+                    <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{movie.poster_path}}" class="card-img-top" alt="{{movie.title}}">
+                {% else %}
+                    <img src="https://via.placeholder.com/600x900?text=No+Poster" class="card-img-top" alt="{{movie.title}}">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <small class="card-text text-muted">{{movie.release_date|slice:4}}</small>
+                    <h5 class="card-title">{{movie.title}}</h5>
+                    {% if movie.character %}
+                        <small class="text-muted mb-2">as {{movie.character}}</small>
+                    {% endif %}
+                    <p class="card-text flex-grow-1">{{movie.overview|truncatechars:100}}</p>
+                    <a href="/movies/{{movie.id}}" class="btn btn-outline-primary mt-auto">Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if movies|length >= 20 %}
+    <div class="text-center mt-4">
+        <button id="load-more" data-next-page="{{next_page}}" class="btn btn-primary px-4 py-2">Load More</button>
+    </div>
+    {% endif %}
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+{% endblock %}

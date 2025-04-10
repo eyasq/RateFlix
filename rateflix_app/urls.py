@@ -32,7 +32,8 @@ urlpatterns = [
     path('reviews/delete/<int:review_id>', views.delete_review, name='delete_review'),
     path('logout', views.logout_user, name='logout'),
     path('search', views.search, name='search'),
-    path('recommend/', views.recommend, name='recommend')
+    path('recommend/', views.recommend, name='recommend'),
+    path('actor/<int:actor_id>', views.actors_movies, name='actor_movies')
 
 
 ]

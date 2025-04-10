@@ -1,31 +1,20 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django import forms
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .tmdb_utils import get_movies, get_movie_details, search_movie
+from .tmdb_utils import get_movies, get_movie_details
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
+
 import json
-import os
-from mistralai import Mistral # type: ignore
-from dotenv import load_dotenv # type: ignore
-
-
-load_dotenv()  # take environment variables
 # Create your views here.
-def search(request):
-    title = request.POST.get('title')
-    res = search_movie(title)
-    context = {
-        "movies":res
-    }
-    return render(request, 'test.html', context)
+
 def register_user(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -68,6 +57,8 @@ def login_user(request):
         return render(request, 'login.html')
 
 def home(request):
+    #why use TMDB API for our project? there were 3 choices, TMDB, OMDB, and TVMaze. TMDB is the best, as it has built in support for filtering by rating, category, popularity, releasedate, etc, and a generous rate (50reqs/sec). only disadvantage is it doesnt integrate IMDB rating. OMDB does, but has no sorting by popularity or release date, max 1000req/day, less metadata. TV maze api is mostly for TV shows, not movies. So we are using OMDB.
+    
     sort_by = request.GET.get('sort_by', 'popularity.desc')
     genre = request.GET.get('genre')
     page = request.GET.get('page', 1)
@@ -76,7 +67,7 @@ def home(request):
     except (TypeError, ValueError):
         page = 1
     movies = get_movies(sort_by=sort_by, genre=genre, page=page)
-
+    print(movies)
     context = {
         "movies":movies,
         "next_page":page + 1,
@@ -125,7 +116,7 @@ def add_to_favorites(request):
             api_id = data.get('api_id')
             title = data.get('title')
             poster_url = data.get('poster_url')
-            
+
             # Add debug print to verify data
             print(f"Adding to favorites: {api_id}, {title}")
             
@@ -135,7 +126,7 @@ def add_to_favorites(request):
                     api_id=api_id,
                     defaults={
                         'title': title,
-                        'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_url}"
+                        'poster_url': poster_url
                     }
                 )
                 
@@ -173,12 +164,13 @@ def submit_review(request):
         title =  details.get('title')
         poster_path = details.get('poster_path')
 
+        poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
 
         movie_instance, created = Movie.objects.get_or_create(
             api_id=movie_id,
             defaults={
                 'title': title,
-                'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_path}"
+                'poster_url': poster_url
             }
         )
 
@@ -230,7 +222,7 @@ def submit_comment(request):
             api_id = movie_id,
             defaults={
                 'title':title,
-                'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_url}"
+                'poster_url':poster_url
             }
         )
         comment = Comment.objects.create(
@@ -251,124 +243,10 @@ def logout_user(request):
     return redirect('/')
 
 def profile(request):
-    reviewed_movies = Movie.objects.filter(reviews__user=request.user).distinct()
-    favorited_movies = Movie.objects.filter(favorited_by__user=request.user).distinct()
-    context={
-        'user':request.user,
-        'movies':reviewed_movies,
-        'favorites':favorited_movies
-    }
-    return render(request, 'profile.html',context)
-
-def other_profile_(request, profile_id):
-    user = request.user
-    other = get_object_or_404(User, id = profile_id)
-    your_reviewed_movies = Movie.objects.filter(reviews__user=user).distinct()
-    other_reviewed_movies = Movie.objects.filter(reviews__user=other).distinct()
-    your_favorited_movies = Movie.objects.filter(favorited_by__user=user).distinct()
-    other_favorited_movies = Movie.objects.filter(favorited_by__user=other).distinct()
-    shared_favorites = your_favorited_movies.filter(id__in=other_favorited_movies)
-    if your_reviewed_movies.exists() or other_favorited_movies.exists():
-        affinity = int((shared_favorites.count() / max(your_reviewed_movies.count(), other_favorited_movies.count())) * 100)
-    else:
-        affinity = 0
-    context = {
-        "user":request.user,
-        "user_movies":your_reviewed_movies,
-        "user_favorites":your_favorited_movies,
-        "other":other,
-        "other_movies":other_reviewed_movies,
-        "other_favorites":other_favorited_movies,
-        "affinity":affinity
-    }
-    return render(request, 'other_profile.html', context)
-
-def delete_review(request,review_id):
-    review = Review.objects.get(id = review_id)
-    movie = review.movie
-    movie_res = search_movie(movie.title)
-    if request.user == review.user:
-        review.delete()
-    else:
-        messages.error(request, "You are not authorized to delete this review")
-        return redirect('/')
-    return redirect(f'/movies/{movie_res[0].id}')
-@require_POST
-@login_required
-def recommend(request):
-    try:
-        
-        user_id = request.POST.get('data')
-        user = User.objects.get(id=user_id)
-        
-        try:
-            user_favorites = list(user.favorites.all().values_list('movie__title', flat=True))
-            print(f"User favorites: {user_favorites}")
-        except Exception as e:
-            print(f"Error fetching favorites: {str(e)}")
-            user_favorites = []
-        
-        try:
-            user_reviews = user.reviews.all()
-            ratings = []
-            for review in user_reviews:
-                ratings.append({
-                    "title": review.movie.title,
-                    "rating": review.rating,
-                })
-            print(f"User ratings: {ratings}")
-        except Exception as e:
-            print(f"Error fetching reviews: {str(e)}")
-            ratings = []
-            
-        user_data = {
-            "username": user.username,
-            "favorites": user_favorites,
-            "ratings": ratings
-        }
-        
-        prompt = f"""
-        Recommend 3 movies based on these user preferences:
-        Favorites: {user_data['favorites']}
-        Ratings: {user_data['ratings']}
-
-        Rules:
-        - Suggest diverse genres but prioritize similar vibes.
-        - Avoid movies the user rated poorly.
-        - Format as a bulleted list with 1-sentence explanations.
-        """
-        
-        api_key = os.getenv('MISTRAL_API_KEY')        
-        model = "mistral-large-latest"
-        client = Mistral(api_key=api_key)
-        
-        try:
-            print("Sending request to Mistral API")
-            # Add a timeout to prevent hanging
-            chat_response = client.chat.complete(
-                model=model,
-                messages=[
-                    {"role": "system", "content": "You are a movie recommendation engine."},  
-                    {"role": "user", "content": prompt}, 
-                ],
-            )
-            ai_response = chat_response.choices[0].message.content
-            
-            return JsonResponse({
-                "status": "success",
-                "recommendations": ai_response
-            })
-        except Exception as e:
-            print(f"Error calling Mistral API: {str(e)}")
-            return JsonResponse({
-                "status": "error",
-                "message": f"AI service error: {str(e)}"
-            }, status=500)
-        
-   
-    except Exception as e:
-        print(f"Unexpected error: {str(e)}")
-        return JsonResponse({
-            "status": "error",
-            "message": f"Server error: {str(e)}"
-        }, status=500)
+    favorites = request.user.favorites.select_related('movie')
+    return render(request, 'profile.html', {
+        'user': request.user,
+        'favorites': favorites,
+    })
+def about(request):
+    return render (request,'about.html')

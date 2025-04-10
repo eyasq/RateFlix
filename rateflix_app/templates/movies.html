@@ -43,7 +43,7 @@
             {% for movie in movies %}
             <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
               <div class="card h-100 mt-3">
-                <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}" class="card-img-top" alt="{{movie.title}}">
+                <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{movie.poster_path}}" class="card-img-top" alt="{{movie.title}}">
                 <div class="card-body">
                     <small class="card-text text-muted">{{movie.release_date|slice:4}}</small>
 

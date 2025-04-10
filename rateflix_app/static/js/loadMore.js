@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }).catch(e=>{
             console.error('error loading movies', e)
             button.disabled = false;
-            button.textContent = 'Error - Try Again';
+            button.textContent = 'Load More';
         })
     })
 })

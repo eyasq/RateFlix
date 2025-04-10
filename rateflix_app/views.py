@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django import forms
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
@@ -11,7 +11,6 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
-
 import json
 # Create your views here.
 
@@ -67,7 +66,7 @@ def home(request):
     except (TypeError, ValueError):
         page = 1
     movies = get_movies(sort_by=sort_by, genre=genre, page=page)
-    print(movies)
+
     context = {
         "movies":movies,
         "next_page":page + 1,
@@ -116,7 +115,7 @@ def add_to_favorites(request):
             api_id = data.get('api_id')
             title = data.get('title')
             poster_url = data.get('poster_url')
-
+            
             # Add debug print to verify data
             print(f"Adding to favorites: {api_id}, {title}")
             
@@ -126,7 +125,7 @@ def add_to_favorites(request):
                     api_id=api_id,
                     defaults={
                         'title': title,
-                        'poster_url': poster_url
+                        'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_url}"
                     }
                 )
                 
@@ -164,13 +163,12 @@ def submit_review(request):
         title =  details.get('title')
         poster_path = details.get('poster_path')
 
-        poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
 
         movie_instance, created = Movie.objects.get_or_create(
             api_id=movie_id,
             defaults={
                 'title': title,
-                'poster_url': poster_url
+                'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_path}"
             }
         )
 
@@ -222,7 +220,7 @@ def submit_comment(request):
             api_id = movie_id,
             defaults={
                 'title':title,
-                'poster_url':poster_url
+                'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_url}"
             }
         )
         comment = Comment.objects.create(
@@ -243,11 +241,34 @@ def logout_user(request):
     return redirect('/')
 
 def profile(request):
-    other_user = User.objects.filter(username='someone_else').first()
-    affinity_score = 78
+    reviewed_movies = Movie.objects.filter(reviews__user=request.user).distinct()
+    favorited_movies = Movie.objects.filter(favorited_by__user=request.user).distinct()
     context={
         'user':request.user,
-        'other_user':other_user,
-        'affinity_score':affinity_score
+        'movies':reviewed_movies,
+        'favorites':favorited_movies
     }
     return render(request, 'profile.html',context)
+
+def other_profile_(request, profile_id):
+    user = request.user
+    other = get_object_or_404(User, id = profile_id)
+    your_reviewed_movies = Movie.objects.filter(reviews__user=user).distinct()
+    other_reviewed_movies = Movie.objects.filter(reviews__user=other).distinct()
+    your_favorited_movies = Movie.objects.filter(favorited_by__user=user).distinct()
+    other_favorited_movies = Movie.objects.filter(favorited_by__user=other).distinct()
+    shared_favorites = your_favorited_movies.filter(id__in=other_favorited_movies)
+    if your_reviewed_movies.exists() or other_favorited_movies.exists():
+        affinity = int((shared_favorites.count() / max(your_reviewed_movies.count(), other_favorited_movies.count())) * 100)
+    else:
+        affinity = 0
+    context = {
+        "user":request.user,
+        "user_movies":your_reviewed_movies,
+        "user_favorites":your_favorited_movies,
+        "other":other,
+        "other_movies":other_reviewed_movies,
+        "other_favorites":other_favorited_movies,
+        "affinity":affinity
+    }
+    return render(request, 'other_profile.html', context)

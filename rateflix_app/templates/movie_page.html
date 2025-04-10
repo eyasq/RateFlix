@@ -64,11 +64,11 @@
               <strong>{{ review.user.username }}</strong>:
               <p class="mb-0">{{ review.body }}</p>
               <p class="mb-0">{{ review.rating }} Stars</p>
-
+              {% if request.user == review.user %}
+              <button class="btn btn-danger btn-sm"><a class="utilLink" href="/reviews/delete/{{review.id}}">Delete Review</a></button>
+              {%endif %}
             </div>
-            {% if request.user == review.user %}
-            <button class="btn btn-danger btn-sm"><a class="utilLink" href="/reviews/delete/{{review.id}}">Delete Review</a></button>
-            {%endif %}
+   
 
           {% endfor %}
         {% else %}
@@ -122,7 +122,7 @@
         {% if comments %}
           {% for comment in comments.all %}
             <div class="border p-2 rounded mb-2">
-              <strong>{{ comment.user.username }}</strong>:
+              <strong><a id="ProfileHl" href="/profile/{{comment.user.id}}">{{ comment.user.username }}</a></strong>:
               <p class="mb-2">{{ comment.body }}</p>
               {% if request.user == comment.user %}
               <button class="btn btn-danger btn-sm"><a class="utilLink" href="/comments/delete/{{comment.id}}">Delete Comment</a></button>

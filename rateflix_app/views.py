@@ -5,13 +5,16 @@ from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+
 from django.contrib.auth.models import User
 from .tmdb_utils import get_movies, get_movie_details, search_movie, actor_movies
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
-import os
+
 import json
 from mistralai import Mistral
 
@@ -377,12 +380,4 @@ def actors_movies(request, actor_id):
     return render(request, 'actorsmovies.html', context)
 
 def about(request):
-     return render (request,'about.html')
-
-def search(request):
-     title = request.POST.get('title')
-     res = search_movie(title)
-     context = {
-         "movies":res
-     }
-     return render(request, 'test.html', context)
+    return render (request,'about.html')

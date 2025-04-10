@@ -7,12 +7,11 @@
     <div class="row align-items-center">  
        
         <div class="col-md-6 mb-3 mb-md-0">
-            <form action="/search" method="post" class="h-100">  
+            <form action="{% url 'search' %}" method="POST" class="d-flex">
                 {% csrf_token %}
-                <div class="input-group" style="height: 42px;"> 
-                    <input type="text" class="form-control" placeholder="Search for movies..." name="title" aria-label="Search movies">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i> Search
+                <input type="text" name="query" class="form-control me-2" placeholder="Search for movies..." aria-label="Search movies">
+                <button class="btn btn-primary" type="submit">Search</button>
+              </form>
                     </button>
                 </div>
             </form>

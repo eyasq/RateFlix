@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django import forms
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
@@ -11,21 +11,10 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
+
 import json
-import os
-from mistralai import Mistral # type: ignore
-from dotenv import load_dotenv # type: ignore
-
-
-load_dotenv()  # take environment variables
 # Create your views here.
-def search(request):
-    title = request.POST.get('title')
-    res = search_movie(title)
-    context = {
-        "movies":res
-    }
-    return render(request, 'test.html', context)
+
 def register_user(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -68,6 +57,8 @@ def login_user(request):
         return render(request, 'login.html')
 
 def home(request):
+    #why use TMDB API for our project? there were 3 choices, TMDB, OMDB, and TVMaze. TMDB is the best, as it has built in support for filtering by rating, category, popularity, releasedate, etc, and a generous rate (50reqs/sec). only disadvantage is it doesnt integrate IMDB rating. OMDB does, but has no sorting by popularity or release date, max 1000req/day, less metadata. TV maze api is mostly for TV shows, not movies. So we are using OMDB.
+    
     sort_by = request.GET.get('sort_by', 'popularity.desc')
     genre = request.GET.get('genre')
     page = request.GET.get('page', 1)
@@ -76,7 +67,7 @@ def home(request):
     except (TypeError, ValueError):
         page = 1
     movies = get_movies(sort_by=sort_by, genre=genre, page=page)
-
+    print(movies)
     context = {
         "movies":movies,
         "next_page":page + 1,
@@ -125,7 +116,7 @@ def add_to_favorites(request):
             api_id = data.get('api_id')
             title = data.get('title')
             poster_url = data.get('poster_url')
-            
+
             # Add debug print to verify data
             print(f"Adding to favorites: {api_id}, {title}")
             
@@ -135,7 +126,7 @@ def add_to_favorites(request):
                     api_id=api_id,
                     defaults={
                         'title': title,
-                        'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_url}"
+                        'poster_url': poster_url
                     }
                 )
                 
@@ -173,12 +164,13 @@ def submit_review(request):
         title =  details.get('title')
         poster_path = details.get('poster_path')
 
+        poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
 
         movie_instance, created = Movie.objects.get_or_create(
             api_id=movie_id,
             defaults={
                 'title': title,
-                'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_path}"
+                'poster_url': poster_url
             }
         )
 
@@ -230,7 +222,7 @@ def submit_comment(request):
             api_id = movie_id,
             defaults={
                 'title':title,
-                'poster_url': f"https://image.tmdb.org/t/p/w600_and_h900_bestv2{poster_url}"
+                'poster_url':poster_url
             }
         )
         comment = Comment.objects.create(

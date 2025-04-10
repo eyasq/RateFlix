@@ -375,3 +375,14 @@ def actors_movies(request, actor_id):
     }
     print(_credits['actor_details'])
     return render(request, 'actorsmovies.html', context)
+
+def about(request):
+     return render (request,'about.html')
+
+def search(request):
+     title = request.POST.get('title')
+     res = search_movie(title)
+     context = {
+         "movies":res
+     }
+     return render(request, 'test.html', context)

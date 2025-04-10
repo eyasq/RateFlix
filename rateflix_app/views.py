@@ -6,14 +6,20 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .tmdb_utils import get_movies, get_movie_details
+from .tmdb_utils import get_movies, get_movie_details, search_movie
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
 import json
 # Create your views here.
-
+def search(request):
+    title = request.POST.get('title')
+    res = search_movie(title)
+    context = {
+        "movies":res
+    }
+    return render(request, 'test.html', context)
 def register_user(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -56,8 +62,6 @@ def login_user(request):
         return render(request, 'login.html')
 
 def home(request):
-    #why use TMDB API for our project? there were 3 choices, TMDB, OMDB, and TVMaze. TMDB is the best, as it has built in support for filtering by rating, category, popularity, releasedate, etc, and a generous rate (50reqs/sec). only disadvantage is it doesnt integrate IMDB rating. OMDB does, but has no sorting by popularity or release date, max 1000req/day, less metadata. TV maze api is mostly for TV shows, not movies. So we are using OMDB.
-    
     sort_by = request.GET.get('sort_by', 'popularity.desc')
     genre = request.GET.get('genre')
     page = request.GET.get('page', 1)
@@ -272,3 +276,13 @@ def other_profile_(request, profile_id):
         "affinity":affinity
     }
     return render(request, 'other_profile.html', context)
+
+def delete_review(request,review_id):
+    review = Review.objects.get(id = review_id)
+    movie = review.movie
+    if request.user == review.user:
+        review.delete()
+    else:
+        messages.error(request, "You are not authorized to delete this review")
+        return redirect('/')
+    return redirect(f'/movies/{movie.id}')

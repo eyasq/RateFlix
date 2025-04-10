@@ -45,3 +45,8 @@ def get_movie_details(movie_id):
 
     }
     return context 
+
+def search_movie(title):
+    movie = Movie()
+    search_res = movie.search(title)
+    return search_res

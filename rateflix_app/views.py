@@ -330,6 +330,7 @@ def recommend(request):
         - Suggest diverse genres but prioritize similar vibes.
         - Avoid movies the user rated poorly.
         - Format as a bulleted list with 1-sentence explanations.
+        - seperate each suggestion with 30 dashes.
         """
         
         api_key = os.getenv('MISTRAL_API_KEY')        

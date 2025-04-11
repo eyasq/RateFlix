@@ -36,7 +36,7 @@ def get_movie_details(movie_id):
     movie = Movie()
     details = movie.details(movie_id)
     credits = movie.credits(movie_id)
-    cast = list(credits.cast)[:5] #get top 5 actors
+    cast = list(credits.cast)[:8] #get top 8 actors
 
 
     context = {

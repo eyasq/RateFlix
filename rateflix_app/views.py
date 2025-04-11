@@ -5,6 +5,9 @@ from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+
 from django.contrib.auth.models import User
 from .tmdb_utils import get_movies, get_movie_details, search_movie, actor_movies
 from django.http import JsonResponse
@@ -378,12 +381,33 @@ def actors_movies(request, actor_id):
     return render(request, 'actorsmovies.html', context)
 
 def about(request):
-     return render (request,'about.html')
-
+    return render (request,'about.html')
 def search(request):
-     title = request.POST.get('title')
-     res = search_movie(title)
-     context = {
-         "movies":res
-     }
-     return render(request, 'test.html', context)
+    if request.method == 'POST':
+        query = request.POST.get('title')
+        if query:
+            results = search_movie(query)  # This uses your TMDb utility
+            return render(request, 'search_results.html', {'query': query, 'results': results})
+        else:
+            messages.error(request, "Please enter a search query.")
+            return redirect('/')
+    return redirect('/')
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        if name and email and message:
+            send_mail(
+                subject=f"Contact Form Submission from {name}",
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.DEFAULT_FROM_EMAIL],
+            )
+            messages.success(request, "Message sent successfully!")
+            return redirect('contact')
+        else:
+            messages.error(request, "All fields are required.")
+    
+    return render(request, 'contact.html')

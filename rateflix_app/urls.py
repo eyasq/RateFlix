@@ -24,17 +24,16 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('about/',views.about,name='about'),
     path('profile/',views.profile,name='profile'),
-    path('profile/<int:profile_id>',views.other_profile_,name='other_profile'),
     path('movies/<int:movie_id>', views.movie_page, name='movie_page'),
     path('add_to_favorites/', views.add_to_favorites, name='add_to_favorites'),
     path('submit_review/', views.submit_review, name='submit_review'),
     path('submit_comment/', views.submit_comment, name='submit_comment'),
     path('comments/delete/<int:comment_id>', views.delete_comment, name='delete_comment'),
     path('reviews/delete/<int:review_id>', views.delete_review, name='delete_review'),
+    path('contact/', views.contact, name='contact'),
     path('logout', views.logout_user, name='logout'),
     path('search', views.search, name='search'),
-    path('recommend/', views.recommend, name='recommend'),
-    path('actor/<int:actor_id>', views.actors_movies, name='actor_movies')
+    path('recommend/', views.recommend, name='recommend')
 
 
 ]

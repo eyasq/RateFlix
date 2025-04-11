@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Movie, Favorite, Review, Comment
 from django.views.decorators.http import require_POST
-
+import os
 import json
 from mistralai import Mistral
 

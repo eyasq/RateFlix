@@ -20,7 +20,7 @@ from . import views
 
 urlpatterns = [
     path('register', views.register_user, name='register'),
-    path('login', views.login_user, name='login'),
+    path('login/', views.login_user, name='login'),
     path('', views.home, name='home'),
     path('about/',views.about,name='about'),
     path('profile/',views.profile,name='profile'),
@@ -31,7 +31,7 @@ urlpatterns = [
     path('comments/delete/<int:comment_id>', views.delete_comment, name='delete_comment'),
     path('reviews/delete/<int:review_id>', views.delete_review, name='delete_review'),
     path('contact/', views.contact, name='contact'),
-    path('logout', views.logout_user, name='logout'),
+    path('logout/', views.logout_user, name='logout'),
     path('search', views.search, name='search'),
     path('recommend/', views.recommend, name='recommend'),
     path('actor/<int:actor_id>', views.actors_movies, name='actors_movies')

@@ -115,7 +115,6 @@ def movie_page(request, movie_id):
 def add_to_favorites(request):
     if request.method == 'POST':
         try:
-            # Parse the request body and handle potential JSON decode errors
             data = json.loads(request.body.decode('utf-8'))
             
             api_id = data.get('api_id')
@@ -138,11 +137,9 @@ def add_to_favorites(request):
                 favorite_exists = Favorite.objects.filter(user=request.user, movie=movie).exists()
                 
                 if favorite_exists:
-                    # Remove from favorites
                     Favorite.objects.filter(user=request.user, movie=movie).delete()
                     return JsonResponse({'status': 'removed', 'message': 'Movie removed from favorites'})
                 else:
-                    # Add to favorites
                     Favorite.objects.create(user=request.user, movie=movie)
                     return JsonResponse({'status': 'success', 'message': 'Movie added to favorites'})
             else:
@@ -342,7 +339,6 @@ def recommend(request):
         
         try:
             print("Sending request to Mistral API")
-            # Add a timeout to prevent hanging
             chat_response = client.chat.complete(
                 model=model,
                 messages=[
@@ -386,7 +382,7 @@ def search(request):
     if request.method == 'POST':
         query = request.POST.get('title')
         if query:
-            results = search_movie(query)  # This uses your TMDb utility
+            results = search_movie(query)  #
             return render(request, 'search_results.html', {'query': query, 'results': results})
         else:
             messages.error(request, "Please enter a search query.")

@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     commentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        // Gather the data and post it to the backend
         const commentBody = document.getElementById('commentText').value;
         const submitCommentBtn = document.getElementById('submitCommentButton');
         const comment_csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;

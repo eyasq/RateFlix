@@ -82,7 +82,7 @@ body {
     text-decoration: none;
   }
 .actor-character {
-    color: #f39c12; /* a golden-orange shade – change to anything you like */
+    color: #f39c12; 
     font-style: italic;
   }
 .carousel-item {

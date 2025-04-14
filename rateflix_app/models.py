@@ -13,7 +13,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
     body = models.TextField()
-    rating = models.PositiveSmallIntegerField(blank=True) #1-5 // 1-10
+    rating = models.PositiveSmallIntegerField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         unique_together = ('user', 'movie') 

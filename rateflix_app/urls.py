@@ -24,6 +24,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('about/',views.about,name='about'),
     path('profile/',views.profile,name='profile'),
+    path('profile/<int:profile_id>',views.other_profile_,name='other_profile'),
     path('movies/<int:movie_id>', views.movie_page, name='movie_page'),
     path('add_to_favorites/', views.add_to_favorites, name='add_to_favorites'),
     path('submit_review/', views.submit_review, name='submit_review'),

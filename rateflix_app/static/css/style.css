@@ -141,3 +141,18 @@ body {
   .input-group .btn {
     height: 100%;
   }
+
+  .list-group-item {
+    background-color: #161b22 !important;
+    border: 1px solid #30363d !important;
+    transition: background-color 0.3s ease;
+  }
+  
+  .list-group-item:hover {
+    background-color: #21262d !important;
+  }
+  
+  .list-group-item h6 {
+    margin-bottom: 0;
+    color: #c9d1d9;
+  }

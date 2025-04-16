@@ -165,3 +165,11 @@ body {
 .fw-semibold:hover {
   text-decoration: underline;
 }
+.navbar-dark .navbar-nav .nav-link {
+  color: #c9d1d9;
+  transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #58a6ff;
+}

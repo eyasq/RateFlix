@@ -3,66 +3,65 @@
 {% block content %}
 
 <div class="container my-5">
-  <div class="card mb-4 p-4 shadow-sm">
-    <div class="row align-items-center">  
-       
-        <div class="col-md-6 mb-3 mb-md-0">
-            <form action="/search" method="post" class="h-100">  
-                {% csrf_token %}
-                <div class="input-group" style="height: 42px;"> 
-                    <input type="text" class="form-control" placeholder="Search for movies..." name="title" aria-label="Search movies">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i> Search
-                    </button>
-                </div>
-            </form>
+    <div class="card mb-4 p-4 shadow-sm">
+      <div class="row gy-3 gx-4 align-items-center">
+          <div class="col-12 col-md-6">
+          <form action="/search" method="post">
+            {% csrf_token %}
+            <div class="input-group" style="height: 42px;">
+              <input type="text" class="form-control h-100" placeholder="Search for movies..." name="title" aria-label="Search movies">
+              <button class="btn btn-primary h-100" type="submit" style="min-width: 90px;">
+                <i class="fas fa-search"></i> Search
+              </button>
+            </div>
+          </form>
         </div>
-        
-        <div class="col-md-6">
-            <form id="filter-form" method="GET" action="#" class="h-100 d-flex align-items-center flex-wrap">  
-                <div class="me-3 mb-2 mb-md-0" style="min-width: 180px; height: 42px;"> 
-                    <select name="sort_by" id="sort-select" class="form-select h-100">  
-                        <option value="popularity.desc" {% if current_sort == "popularity.desc" %}selected{% endif %}>Popularity</option>
-                        <option value="vote_average.desc" {% if current_sort == "vote_average.desc" %}selected{% endif %}>Rating</option>
-                        <option value="release_date.desc" {% if current_sort == "release_date.desc" %}selected{% endif %}>Newest Releases</option>
-                        <option value="revenue.desc" {% if current_sort == "revenue.desc" %}selected{% endif %}>Highest Grossing</option>
-                    </select>
-                </div>
-                
-                <div class="me-3 mb-2 mb-md-0" style="min-width: 180px; height: 42px;"> 
-                    <select name="genre" id="genre-select" class="form-select h-100">  
-                        <option value="">All Genres</option>
-                        <option value="28" {% if current_genre == "28" %}selected{% endif %}>Action</option>
-                        <option value="12" {% if current_genre == "12" %}selected{% endif %}>Adventure</option>
-                        <option value="16" {% if current_genre == "16" %}selected{% endif %}>Comedy</option>
-                        <option value="35" {% if current_genre == "35" %}selected{% endif %}>Crime</option>
-                        <option value="80" {% if current_genre == "80" %}selected{% endif %}>Documentary</option>
-                        <option value="99" {% if current_genre == "99" %}selected{% endif %}>Drama</option>
-                        <option value="18" {% if current_genre == "18" %}selected{% endif %}>Family</option>
-                        <option value="10751" {% if current_genre == "10751" %}selected{% endif %}>Fantasy</option>
-                        <option value="14" {% if current_genre == "14" %}selected{% endif %}>History</option>
-                        <option value="36" {% if current_genre == "36" %}selected{% endif %}>Horror</option>
-                        <option value="27" {% if current_genre == "27" %}selected{% endif %}>Music</option>
-                        <option value="10402" {% if current_genre == "10402" %}selected{% endif %}>Mystery</option>
-                        <option value="9648" {% if current_genre == "9648" %}selected{% endif %}>Romance</option>
-                        <option value="10749" {% if current_genre == "10749" %}selected{% endif %}>Romance</option>
-                        <option value="878" {% if current_genre == "878" %}selected{% endif %}>SciFi</option>
-                        <option value="53" {% if current_genre == "53" %}selected{% endif %}>Thriller</option>
-                        <option value="10752" {% if current_genre == "10752" %}selected{% endif %}>War</option>
-                    </select>
-                </div>
-                
-                <div class="mb-2 mb-md-0" style="height: 42px;">  
-                    <button type="submit" class="btn btn-primary h-100">Apply Filters</button>  
-                </div>
-            </form>
+  
+        <div class="col-12 col-md-6">
+          <form id="filter-form" method="GET" action="#" class="d-flex flex-column flex-md-row align-items-stretch gap-2">
+  
+            <select name="sort_by" id="sort-select" class="form-select" style="height: 42px;">
+              <option value="popularity.desc" {% if current_sort == "popularity.desc" %}selected{% endif %}>Popularity</option>
+              <option value="vote_average.desc" {% if current_sort == "vote_average.desc" %}selected{% endif %}>Rating</option>
+              <option value="release_date.desc" {% if current_sort == "release_date.desc" %}selected{% endif %}>Newest Releases</option>
+              <option value="revenue.desc" {% if current_sort == "revenue.desc" %}selected{% endif %}>Highest Grossing</option>
+            </select>
+  
+            <select name="genre" id="genre-select" class="form-select" style="height:42px;">  
+                <option value="">All Genres</option>
+                <option value="28" {% if current_genre == "28" %}selected{% endif %}>Action</option>
+                <option value="12" {% if current_genre == "12" %}selected{% endif %}>Adventure</option>
+                <option value="16" {% if current_genre == "16" %}selected{% endif %}>Comedy</option>
+                <option value="35" {% if current_genre == "35" %}selected{% endif %}>Crime</option>
+                <option value="80" {% if current_genre == "80" %}selected{% endif %}>Documentary</option>
+                <option value="99" {% if current_genre == "99" %}selected{% endif %}>Drama</option>
+                <option value="18" {% if current_genre == "18" %}selected{% endif %}>Family</option>
+                <option value="10751" {% if current_genre == "10751" %}selected{% endif %}>Fantasy</option>
+                <option value="14" {% if current_genre == "14" %}selected{% endif %}>History</option>
+                <option value="36" {% if current_genre == "36" %}selected{% endif %}>Horror</option>
+                <option value="27" {% if current_genre == "27" %}selected{% endif %}>Music</option>
+                <option value="10402" {% if current_genre == "10402" %}selected{% endif %}>Mystery</option>
+                <option value="9648" {% if current_genre == "9648" %}selected{% endif %}>Romance</option>
+                <option value="10749" {% if current_genre == "10749" %}selected{% endif %}>Romance</option>
+                <option value="878" {% if current_genre == "878" %}selected{% endif %}>SciFi</option>
+                <option value="53" {% if current_genre == "53" %}selected{% endif %}>Thriller</option>
+                <option value="10752" {% if current_genre == "10752" %}selected{% endif %}>War</option>
+            </select>
+  
+            <button type="submit" class="btn btn-primary" style="height: 42px; min-width: 130px;">
+              Apply Filters
+            </button>
+          </form>
         </div>
+  
+      </div>
     </div>
-</div>
+  </div>
+
 
     <div class="row" id="movies-container">
         {% for movie in movies %}
-        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <div class="card h-100 shadow-sm">
                 <a href="/movies/{{movie.id}}">
                     <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{movie.poster_path}}" class="card-img-top" alt="{{movie.title}}">

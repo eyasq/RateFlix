@@ -156,3 +156,12 @@ body {
     margin-bottom: 0;
     color: #c9d1d9;
   }
+  .card-subtitle a,
+.fw-semibold {
+  color: #58a6ff;
+  text-decoration: none;
+}
+.card-subtitle a:hover,
+.fw-semibold:hover {
+  text-decoration: underline;
+}

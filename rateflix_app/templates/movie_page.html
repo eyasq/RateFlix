@@ -71,7 +71,7 @@
                 <h6 class="card-subtitle">
                   <a class="utilLink fw-bold" href="/profile/{{ review.user.id }}">{{ review.user.username }}</a>
                 </h6>
-                {% if request.user == review.user %}
+                {% if request.user == review.user or request.user.is_staff%}
                 <a href="/reviews/delete/{{ review.id }}" class="btn btn-sm btn-outline-danger">
                   <i class="bi bi-trash"></i> Delete
                 </a>
@@ -139,7 +139,7 @@
             <div class="card-body p-3">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <a id="ProfileHl" class="fw-semibold" href="/profile/{{ comment.user.id }}">{{ comment.user.username }}</a>
-                {% if request.user == comment.user %}
+                {% if request.user == comment.user or request.user.is_staff %}
                 <a href="/comments/delete/{{ comment.id }}" class="btn btn-sm btn-outline-danger">
                   <i class="bi bi-trash"></i> Delete
                 </a>

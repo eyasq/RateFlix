@@ -187,7 +187,7 @@ def submit_review(request):
 def delete_review(request, review_id):
     review = Review.objects.filter(id = review_id).first()
     movie = review.movie
-    if request.user == review.user:
+    if request.user == review.user or request.user.is_staff:
         review.delete()
         messages.success(request, 'Review succesfully deleted')
         return redirect(f'/movies/{movie.api_id}')
@@ -198,7 +198,7 @@ def delete_review(request, review_id):
 def delete_comment(request, comment_id):
     comment = Comment.objects.filter(id = comment_id).first()
     movie = comment.movie
-    if request.user == comment.user:
+    if request.user == comment.user or request.user.is_staff:
         comment.delete()
         messages.success(request, 'Comment succesfully deleted')
         return redirect(f'/movies/{movie.api_id}')

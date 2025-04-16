@@ -68,7 +68,7 @@
                     <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{movie.poster_path}}" class="card-img-top" alt="{{movie.title}}">
                 </a>
                 <div class="card-body d-flex flex-column">
-                    <small class="card-text text-muted">{{movie.release_date|slice:4}}</small>
+                    <small class="card-text ">{{movie.release_date|slice:4}}</small>
                     <h5 class="card-title">{{movie.title}}</h5>
                     <p class="card-text flex-grow-1">{{movie.overview|truncatechars:100}}</p>
                     <a href="/movies/{{movie.id}}" class="btn btn-outline-primary mt-auto">Details</a>

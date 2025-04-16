@@ -120,11 +120,6 @@ def add_to_favorites(request):
             api_id = data.get('api_id')
             title = data.get('title')
             poster_url = data.get('poster_url')
-
-            # Add debug print to verify data
-            print(f"Adding to favorites: {api_id}, {title}")
-            
-            # Ensure api_id is the correct type
             if api_id:
                 movie, created = Movie.objects.get_or_create(
                     api_id=api_id,
@@ -330,7 +325,7 @@ def recommend(request):
         - Suggest diverse genres but prioritize similar vibes.
         - Avoid movies the user rated poorly.
         - Format as a bulleted list with 1-sentence explanations.
-        - seperate each suggestion with 30 dashes.
+        - seperate each suggestion with a line break.
         """
         
         api_key = os.getenv('MISTRAL_API_KEY')        

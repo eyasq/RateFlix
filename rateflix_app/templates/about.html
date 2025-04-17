@@ -1,18 +1,128 @@
-{% extends 'base.html' %}
-
-{% block title %}About{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
-  <h2>About RateFlix</h2>
-  <p>Welcome to <strong>RateFlix</strong> — your go-to platform for movie reviews, ratings, and personalized recommendations.</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
   
-  <p>This platform was built with love using Django, Bootstrap, and the TMDB API to help users:</p>
-  <ul>
-    <li>Discover trending movies</li>
-    <li>Write and read movie reviews</li>
-    <li>Save favorites and share opinions</li>
-  </ul>
+  <meta charset="UTF-8">
+  <title>{% block title %}About Us - RateFlix{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/starability.css' %}">
+  <style>
+    .section-title {
+      transition: transform 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+    }
 
-</div>
-{% endblock %}
+    .section-title:hover {
+      transform: scale(1.05);
+      color: #535152; 
+    }
+  </style>
+</head>
+<body class="body">
+
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">🎬 RateFlix</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+          {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="/profile/">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <h1 class="fw-bold text-center display-5 section-title">About RateFlix</h1>
+    <p class="lead text-center mb-5">RateFlix is a platform where movie enthusiasts can discover, rate, and share their opinions on their favorite films. Join our community and explore the world of cinema!</p>
+    
+    <h2 class="fw-bold text-center my-5 section-title">Our Core Values</h2>
+    <div class="row text-center mb-5">
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Transparency</h5>
+            <p class="card-text">We believe in open and honest feedback for every film rated by our users.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Community</h5>
+            <p class="card-text">We foster a space where users can connect, discuss, and grow together through shared movie experiences.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Innovation</h5>
+            <p class="card-text">We continuously improve our platform to ensure the best user experience and latest features.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="fw-bold text-center mb-4 section-title">Technologies We Use</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title mt-3">Django</h5>
+            <p class="card-text">Django is a high-level Python Web framework that we use to power our backend, providing a clean and fast development experience.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title mt-3">MySQL</h5>
+            <p class="card-text">We use MySQL as our database to manage user data, movie information, and ratings, ensuring reliable and efficient data handling.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title mt-3">Bootstrap</h5>
+            <p class="card-text">Bootstrap helps us ensure that RateFlix is responsive and looks great on all devices, from desktops to smartphones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="fw-bold text-center mb-4 section-title">Our Company</h2>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <p class="card-text text-center">
+              RateFlix is operated by a passionate software company focused on delivering cutting-edge digital experiences. We combine technology, creativity, and data to help film enthusiasts connect and enjoy the cinema world like never before.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer mt-5">
+    <div class="container">
+      <p>© 2025 RateFlix. All rights reserved.</p>
+      <p><a href="mailto:contact@rateflix.com" class="text-decoration-none text-muted">contact@rateflix.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

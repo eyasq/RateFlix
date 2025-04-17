@@ -1,170 +1,142 @@
+/* === Global === */
 body {
-    background-color: #0d1117;
-    color: #e6edf3;
-  }
+  background-color: #0d1117;
+  color: #e6edf3;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  .card {
-    background-color: #161b22;
-    color: #e6edf3;
-    border: none;
-    transition: transform 0.2s ease;
-  }
+/* === Cards === */
+.card {
+  background-color: #161b22;
+  color: #e6edf3;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
 
-  .card .btn-outline-primary {
-    color: #58a6ff;
-    border-color: #58a6ff;
-  }
+/* === Buttons === */
+.btn-primary {
+  background-color: #238636;
+  border: none;
+  color: white;
+}
 
-  .card .btn-outline-primary:hover {
-    background-color: #238636;
-    border-color: #238636;
-    color: white;
-  }
+.btn-primary:hover {
+  background-color: #2ea043;
+}
 
-  .form-control,
-  .form-select {
-    background-color: #21262d;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-  }
+.btn-outline-primary {
+  color: #58a6ff;
+  border-color: #58a6ff;
+}
 
-  .form-control::placeholder {
-    color: #8b949e;
-  }
+.btn-outline-primary:hover {
+  background-color: #238636;
+  border-color: #238636;
+  color: white;
+}
 
-  .btn-primary {
-    background-color: #238636;
-    border: none;
-  }
+/* === Input & Select Fields === */
+.form-control,
+.form-select {
+  background-color: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+}
 
-  .btn-primary:hover {
-    background-color: #2ea043;
-  }
+.form-control::placeholder {
+  color: #8b949e;
+}
 
-  .input-group .btn {
-    height: 100%;
-  }
+/* === Load More Button === */
+#load-more {
+  background-color: #238636;
+  border: none;
+}
 
+#load-more:hover {
+  background-color: #2ea043;
+}
 
+/* === Links & Utilities === */
+.utilLink,
+#ProfileHl {
+  color: white !important;
+  text-decoration: none !important;
+}
+
+#ActorHl {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+/* === Actors Information === */
+.actor-name {
+  color: #00bcd4;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.actor-character {
+  color: #f39c12;
+  font-style: italic;
+}
+
+/* === Carousel Slider === */
+.carousel-item {
+  height: 450px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* === Favorite Button === */
 .favorite-btn {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .favorite-btn.favorited {
-    background-color: #ffdb58;
-    color: #333;
-    border-color: #ffc107;
+  background-color: #ffdb58;
+  color: #333;
+  border-color: #ffc107;
 }
-.utilLink{
-    text-decoration: none;
-    color:white;
+
+/* === List Groups === */
+.list-group-item {
+  background-color: #161b22 !important;
+  border: 1px solid #30363d !important;
+  transition: background-color 0.3s ease;
 }
-#ProfileHl{
-    color:white !important;
-    text-decoration: none !important;    
+
+.list-group-item:hover {
+  background-color: #21262d !important;
 }
-#ActorHl{
-    color:black !important;
-    text-decoration: none !important;    
+
+.list-group-item h6 {
+  margin-bottom: 0;
+  color: #c9d1d9;
 }
-.actor-name {
-    color: #00bcd4;
-    font-weight: bold;
-    text-decoration: none;
-  }
-.actor-character {
-    color: #f39c12; 
-    font-style: italic;
-  }
-.carousel-item {
-    height: 450px;
-    background-size: cover;
-    background-position: center;
-  }
-.body {
-    background-color: #0d1117;
-    color: #e6edf3;
-  }
 
-.card {
-    background-color: #161b22;
-    color: #e6edf3;
-    border: none;
-    transition: transform 0.2s ease;
-  }
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
-
-.card .btn-outline-primary {
-    color: #58a6ff;
-    border-color: #58a6ff;
-  }
-
-.card .btn-outline-primary:hover {
-    background-color: #238636;
-    border-color: #238636;
-    color: white;
-  }
-
-  .form-control,
-  .form-select {
-    background-color: #21262d;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-  }
-
-  .form-control::placeholder {
-    color: #8b949e;
-  }
-
-  .btn-primary {
-    background-color: #238636;
-    border: none;
-  }
-
-  .btn-primary:hover {
-    background-color: #2ea043;
-  }
-
-  .input-group .btn {
-    height: 100%;
-  }
-
-  .list-group-item {
-    background-color: #161b22 !important;
-    border: 1px solid #30363d !important;
-    transition: background-color 0.3s ease;
-  }
-  
-  .list-group-item:hover {
-    background-color: #21262d !important;
-  }
-  
-  .list-group-item h6 {
-    margin-bottom: 0;
-    color: #c9d1d9;
-  }
-  .card-subtitle a,
+/* === Subtitle Links === */
+.card-subtitle a,
 .fw-semibold {
   color: #58a6ff;
   text-decoration: none;
 }
+
 .card-subtitle a:hover,
 .fw-semibold:hover {
   text-decoration: underline;
 }
+
+/* === Navbar === */
 .navbar-dark .navbar-nav .nav-link {
   color: #c9d1d9;
   transition: color 0.3s ease;
@@ -172,4 +144,13 @@ body {
 
 .navbar-dark .navbar-nav .nav-link:hover {
   color: #58a6ff;
+}
+
+/* === Movie Poster Hover === */
+.movie-poster {
+  transition: transform 0.3s ease;
+}
+
+.movie-poster:hover {
+  transform: scale(1.05);
 }

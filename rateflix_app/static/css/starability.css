@@ -253,3 +253,13 @@
   -webkit-animation-fill-mode: forwards;
           animation-fill-mode: forwards;
 }
+
+.section-title {
+  transition: transform 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.section-title:hover {
+  transform: scale(1.05);
+  color: #d63384; 
+}

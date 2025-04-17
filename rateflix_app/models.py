@@ -31,8 +31,8 @@ class Profile(models.Model):
 
     
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='favorited_by')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites',blank=True, null=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='favorited_by',blank=True, null=True)
     added_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

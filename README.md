@@ -74,6 +74,46 @@ C:.
     │   └── test.html
     └── __pycache__/
 ```
+## 🎯 API Documentation
+ **TMDB API Endpoints** 
+-- /discover/movie (used in get_movies())
+-- /movie/{movie_id} (used in get_movie_details())
+-- /search/movie (used in search_movie())
+-- /person/{person_id} (used in actor_movies())
+
+ **MistralAI Endpoints**
+ 
+### Model Used
+- `mistral-large-latest`
+
+### Authentication
+- Requires Mistral API key stored in environment variable `MISTRAL_API_KEY`
+
+### Request Format
+```json
+{
+    "model": "mistral-large-latest",
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are a movie recommendation engine."
+        },
+        {
+            "role": "user",
+            "content": "Recommendation prompt based on user preferences"
+        }
+    ]
+}
+```
+-- Example Usage:
+client = Mistral(api_key=os.getenv('MISTRAL_API_KEY'))
+response = client.chat.complete(
+    model="mistral-large-latest",
+    messages=[
+        {"role": "system", "content": "You are a movie recommendation engine."},
+        {"role": "user", "content": prompt},
+    ],
+)
 # 🔧 Installation & Setup
 
 1. **Clone the repository**:

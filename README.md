@@ -76,10 +76,10 @@ C:.
 ```
 ## 🎯 API Documentation
  **TMDB API Endpoints** 
--- /discover/movie (used in get_movies())
--- /movie/{movie_id} (used in get_movie_details())
--- /search/movie (used in search_movie())
--- /person/{person_id} (used in actor_movies())
+-- /discover/movie (used in get_movies())   
+-- /movie/{movie_id} (used in get_movie_details())   
+-- /search/movie (used in search_movie())   
+-- /person/{person_id} (used in actor_movies())   
 
  **MistralAI Endpoints**
  

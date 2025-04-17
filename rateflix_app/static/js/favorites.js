@@ -9,12 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const movieTitle = this.getAttribute('data-movie-title');
         const moviePoster = this.getAttribute('data-movie-poster');
         
-        console.log("Button clicked for movie:", movieId);
-        
+        const poster_url = moviePoster.startsWith('http')
+  ? moviePoster
+  : `https://image.tmdb.org/t/p/w500${moviePoster}`;
         const movieData = {
           api_id: movieId,
           title: movieTitle,
-          poster_url: moviePoster
+          poster_url: poster_url,
         };
         
         const form = this.closest('form');

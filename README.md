@@ -19,68 +19,61 @@
 - **Version Control**: Git & GitHub
 
 ## 📂 Project Structure
-C:.
-│   .env
-│   .gitignore
-│   db.sqlite3
-│   manage.py
-│   README.md
-│
-├───RateFlix
-│   │   asgi.py
-│   │   settings.py
-│   │   urls.py
-│   │   wsgi.py
-│   │   __init__.py
-│   │
-│   └───__pycache__
-│
-│
-└───rateflix_app
-    │   admin.py
-    │   apps.py
-    │   forms.py
-    │   models.py
-    │   tests.py
-    │   tmdb_utils.py
-    │   urls.py
-    │   views.py
-    │   __init__.py
-    ├───migrations
-    │   │   __init__.py
-    │   │
-    │   └───__pycache__
-    │
-    ├───static
-    │   ├───assets
-    │   ├───css
-    │   │       starability.css
-    │   │       style.css
-    │   │
-    │   └───js
-    │           comments.js
-    │           favorites.js
-    │           genre.js
-    │           loadMore.js
-    │           reviews.js
-    │
-    ├───templates
-    │       about.html
-    │       actorsmovies.html
-    │       base.html
-    │       contact.html
-    │       login.html
-    │       movies.html
-    │       movie_page.html
-    │       other_profile.html
-    │       profile.html
-    │       register.html
-    │       search_results.html
-    │       slider.html
-    │       test.html
-    │
-    └───__pycache__
 
+```text
+C:.
+├── .env
+├── .gitignore
+├── db.sqlite3
+├── manage.py
+├── README.md
+├── RateFlix/
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   ├── __init__.py
+│   └── __pycache__/
+└── rateflix_app/
+    ├── admin.py
+    ├── apps.py
+    ├── forms.py
+    ├── models.py
+    ├── tests.py
+    ├── tmdb_utils.py
+    ├── urls.py
+    ├── views.py
+    ├── __init__.py
+    ├── migrations/
+    │   ├── __init__.py
+    │   └── __pycache__/
+    ├── static/
+    │   ├── assets/
+    │   ├── css/
+    │   │   ├── starability.css
+    │   │   └── style.css
+    │   └── js/
+    │       ├── comments.js
+    │       ├── favorites.js
+    │       ├── genre.js
+    │       ├── loadMore.js
+    │       └── reviews.js
+    ├── templates/
+    │   ├── about.html
+    │   ├── actorsmovies.html
+    │   ├── base.html
+    │   ├── contact.html
+    │   ├── login.html
+    │   ├── movies.html
+    │   ├── movie_page.html
+    │   ├── other_profile.html
+    │   ├── profile.html
+    │   ├── register.html
+    │   ├── search_results.html
+    │   ├── slider.html
+    │   └── test.html
+    └── __pycache__/
+```
 # 🔧 Installation & Setup
 
 1. **Clone the repository**:

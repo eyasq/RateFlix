@@ -106,14 +106,14 @@ C:.
 }
 ```
 -- Example Usage:
-client = Mistral(api_key=os.getenv('MISTRAL_API_KEY'))
-response = client.chat.complete(
-    model="mistral-large-latest",
-    messages=[
-        {"role": "system", "content": "You are a movie recommendation engine."},
-        {"role": "user", "content": prompt},
-    ],
-)
+client = Mistral(api_key=os.getenv('MISTRAL_API_KEY'))  
+response = client.chat.complete(  
+    model="mistral-large-latest",  
+    messages=[  
+        {"role": "system", "content": "You are a movie recommendation engine."},  
+        {"role": "user", "content": prompt},  
+    ],  
+)  
 # 🔧 Installation & Setup
 
 1. **Clone the repository**:

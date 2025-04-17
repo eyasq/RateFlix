@@ -75,7 +75,7 @@ C:.
     └── __pycache__/
 ```
 ## 🎯 API Documentation
- **TMDB API Endpoints** 
+ **TMDB API Endpoints**   
 -- /discover/movie (used in get_movies())   
 -- /movie/{movie_id} (used in get_movie_details())   
 -- /search/movie (used in search_movie())   
